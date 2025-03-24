@@ -5,62 +5,32 @@
 #include <iostream>
 #include <vector>
 
-namespace mcb_transport {
 namespace utils {
+using enum_::CommandContext;
+using enum_::ErrorCode;
 
-/**
- * \brief Array para mapear CommandContext em string.
- *
- * Índices:
- *  0 -> GENERAL
- *  1 -> NETWORK
- *  2 -> SYSTEM
- *  3 -> SECURITY
- *  4 -> DEVICE_CONTROL
- *  5 -> UNKNOWN
- */
 static const std::string ContextString[] = {
-    "GENERAL",
-    "NETWORK",
-    "SYSTEM",
-    "SECURITY",
-    "DEVICE_CONTROL",
-    "UNKNOWN"
+    "HARDWARE", "USER", "UNKNOWN"
 };
 
-/**
- * \class Logger::Impl
- * \brief Implementação interna (PImpl) do Logger usando spdlog.
- */
+static const std::string ErrorCodeString[] = {
+    "GeneratorConnectionError"
+};
+
 class Logger::Impl {
 public:
-    Impl() = default;
-    ~Impl() = default;
-
-    /**
-     * \brief Inicializa sinks e configura spdlog (se ainda não foi inicializado).
-     */
     void init(const std::string& logFileName) {
-        if (initialized_) {
-            return;
-        }
+        if (initialized_) return;
 
         try {
-            // Sink diário: cria novo arquivo todo dia à 00:00
             auto dailySink = std::make_shared<spdlog::sinks::daily_file_sink_mt>(logFileName, 0, 0);
-
-            // Sink para console colorido
             auto consoleSink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
 
-            // Cria logger com múltiplos sinks
             std::vector<spdlog::sink_ptr> sinks{ dailySink, consoleSink };
             logger_ = std::make_shared<spdlog::logger>("multi_sink", sinks.begin(), sinks.end());
 
-            // Registra e define como logger padrão
             spdlog::register_logger(logger_);
             spdlog::set_default_logger(logger_);
-
-            // Formato e nível de log
             spdlog::set_pattern("[%T.%e] [%^%l%$] [%n] %v");
             spdlog::set_level(spdlog::level::trace);
 
@@ -70,52 +40,40 @@ public:
         }
     }
 
-    /**
-     * \brief Converte CommandContext em string, garantindo que índices inválidos virem "UNKNOWN".
-     */
-    std::string contextToString(mcb_transport::models::enum_::CommandContext context) {
+    std::string contextToString(CommandContext context) {
         int index = static_cast<int>(context);
-        constexpr int maxIndex = static_cast<int>(sizeof(ContextString) / sizeof(std::string));
-        if (index < 0 || index >= maxIndex) {
-            return ContextString[5]; // "UNKNOWN"
-        }
-        return ContextString[index];
+        constexpr int maxIndex = sizeof(ContextString) / sizeof(std::string);
+        return (index < 0 || index >= maxIndex) ? ContextString[2] : ContextString[index];
     }
 
-    void trace(mcb_transport::models::enum_::CommandContext context, const std::string& message) {
-        if (initialized_) {
-            spdlog::trace("[{}] {}", contextToString(context), message);
-        }
+    std::string errorCodeToString(ErrorCode code) {
+        int index = static_cast<int>(code);
+        constexpr int maxIndex = sizeof(ErrorCodeString) / sizeof(std::string);
+        return (index < 0 || index >= maxIndex) ? "UnknownError" : ErrorCodeString[index];
     }
 
-    void debug(mcb_transport::models::enum_::CommandContext context, const std::string& message) {
-        if (initialized_) {
-            spdlog::debug("[{}] {}", contextToString(context), message);
-        }
+    void trace(CommandContext context, const std::string& message) {
+        if (initialized_) spdlog::trace("[{}] {}", contextToString(context), message);
     }
 
-    void info(mcb_transport::models::enum_::CommandContext context, const std::string& message) {
-        if (initialized_) {
-            spdlog::info("[{}] {}", contextToString(context), message);
-        }
+    void debug(CommandContext context, const std::string& message) {
+        if (initialized_) spdlog::debug("[{}] {}", contextToString(context), message);
     }
 
-    void warning(mcb_transport::models::enum_::CommandContext context, const std::string& message) {
-        if (initialized_) {
-            spdlog::warn("[{}] {}", contextToString(context), message);
-        }
+    void info(CommandContext context, const std::string& message) {
+        if (initialized_) spdlog::info("[{}] {}", contextToString(context), message);
     }
 
-    void error(mcb_transport::models::enum_::CommandContext context, const std::string& message) {
-        if (initialized_) {
-            spdlog::error("[{}] {}", contextToString(context), message);
-        }
+    void warning(CommandContext context, ErrorCode code, const std::string& message) {
+        if (initialized_) spdlog::warn("[{}][{}] {}", contextToString(context), errorCodeToString(code), message);
     }
 
-    void fatal(mcb_transport::models::enum_::CommandContext context, const std::string& message) {
-        if (initialized_) {
-            spdlog::critical("[{}] {}", contextToString(context), message);
-        }
+    void error(CommandContext context, ErrorCode code, const std::string& message) {
+        if (initialized_) spdlog::error("[{}][{}] {}", contextToString(context), errorCodeToString(code), message);
+    }
+
+    void fatal(CommandContext context, ErrorCode code, const std::string& message) {
+        if (initialized_) spdlog::critical("[{}][{}] {}", contextToString(context), errorCodeToString(code), message);
     }
 
 private:
@@ -123,39 +81,16 @@ private:
     std::shared_ptr<spdlog::logger> logger_;
 };
 
-
-Logger::Logger() : pImpl_(std::make_unique<Impl>()) {
-}
-
+// Encapsulamento público
+Logger::Logger() : pImpl_(std::make_unique<Impl>()) {}
 Logger::~Logger() = default;
 
-void Logger::init(const std::string& logFileName) {
-    pImpl_->init(logFileName);
-}
-
-void Logger::trace(mcb_transport::models::enum_::CommandContext context, const std::string& message) {
-    pImpl_->trace(context, message);
-}
-
-void Logger::debug(mcb_transport::models::enum_::CommandContext context, const std::string& message) {
-    pImpl_->debug(context, message);
-}
-
-void Logger::info(mcb_transport::models::enum_::CommandContext context, const std::string& message) {
-    pImpl_->info(context, message);
-}
-
-void Logger::warning(mcb_transport::models::enum_::CommandContext context, const std::string& message) {
-    pImpl_->warning(context, message);
-}
-
-void Logger::error(mcb_transport::models::enum_::CommandContext context, const std::string& message) {
-    pImpl_->error(context, message);
-}
-
-void Logger::fatal(mcb_transport::models::enum_::CommandContext context, const std::string& message) {
-    pImpl_->fatal(context, message);
-}
+void Logger::init(const std::string& logFileName) { pImpl_->init(logFileName); }
+void Logger::trace(CommandContext context, const std::string& message) { pImpl_->trace(context, message); }
+void Logger::debug(CommandContext context, const std::string& message) { pImpl_->debug(context, message); }
+void Logger::info(CommandContext context, const std::string& message) { pImpl_->info(context, message); }
+void Logger::warning(CommandContext context, ErrorCode code, const std::string& message) { pImpl_->warning(context, code, message); }
+void Logger::error(CommandContext context, ErrorCode code, const std::string& message) { pImpl_->error(context, code, message); }
+void Logger::fatal(CommandContext context, ErrorCode code, const std::string& message) { pImpl_->fatal(context, code, message); }
 
 } // namespace utils
-} // namespace mcb_transport
