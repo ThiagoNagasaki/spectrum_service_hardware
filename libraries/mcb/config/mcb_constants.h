@@ -31,7 +31,6 @@ static constexpr std::size_t MCB_MAX_DATA_SIZE = 230;
  * \enum MCBCommand
  * \brief Enumeração dos comandos do protocolo MCB, conforme o manual.
  *
- * Ajuste a lista de comandos (leituras e escritas) conforme a necessidade real.
  */
 enum class MCBCommand : uint8_t {
     // Leituras

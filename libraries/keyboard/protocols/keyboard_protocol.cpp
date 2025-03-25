@@ -58,9 +58,6 @@ void KeyboardProtocol::subscribeKeyPress(std::function<void(const KeyEvent&)> ca
 }
 
 void KeyboardProtocol::onDataReceived(const std::vector<uint8_t>& data) {
-    // Aqui você pode ter frames segmentados ou um frame completo.
-    // Exemplo simples: assume que 'data' já é um frame único [STX, length, cmd, payload..., ETX].
-    // Em casos reais, pode ser preciso um buffer maior.
     parseFrame(data);
 }
 
@@ -87,7 +84,7 @@ void KeyboardProtocol::parseFrame(const std::vector<uint8_t>& frame) {
                 fmt::format("Tecla pressionada: 0x{:02X}", key));
         }
     }
-    // Você pode tratar 0x71, 0x72, etc.
+    // tratar 0x71, 0x72, etc.
     // ...
 }
 

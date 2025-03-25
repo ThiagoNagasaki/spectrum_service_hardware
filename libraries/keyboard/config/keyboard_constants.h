@@ -15,7 +15,6 @@ namespace keyboard::config {
  * 0x79 -> BUZZER
  * 0x7A -> BEEP TECLA
  * 0x7B -> PISCA TECLA
- * ... etc ...
  */
 static constexpr uint8_t CMD_KEY_PRESSED  = 0x70; 
 static constexpr uint8_t CMD_VERSION      = 0x71; 
