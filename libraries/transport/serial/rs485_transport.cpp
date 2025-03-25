@@ -48,7 +48,6 @@ public:
         , fd_(-1)
         , status_(TransportStatus::Disconnected)
     {
-        // Se quiser logar aqui:
         Logger::instance().debug(CommandContext::HARDWARE,
                                  fmt::format("RS485Transport Impl criado para dispositivo {} (baud enum={})",
                                              device_, static_cast<int>(baud_rate_)));

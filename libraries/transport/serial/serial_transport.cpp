@@ -1,7 +1,7 @@
 #include "serial_transport.h"
 #include "../enum_/enum_transportstatus.h"
 #include "../enum_/enum_baudrate.h"
-#include "../../../utils/logger.h"                 // Singleton Logger
+#include "../../../utils/logger.h"                  
 #include "../../../utils/enum_/enum_commandcontext.h"
 #include "../../../utils/enum_/enum_errorcode.h"
 
@@ -32,7 +32,7 @@ static speed_t to_speed_t(BaudRate rate) {
         case BaudRate::BR_57600:  return B57600;
         case BaudRate::BR_115200: return B115200;
         default:
-            return B9600; // fallback
+            return B9600;  
     }
 }
 
