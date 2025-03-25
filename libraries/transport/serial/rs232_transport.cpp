@@ -3,6 +3,7 @@
 #include "../../../utils/logger.h"
 #include "../../../utils/enum_/enum_commandcontext.h"
 #include "../../../utils/enum_/enum_errorcode.h"
+#include "../../transport/enum_/enum_bauntrate.h"
 
 #include <fmt/core.h>
 #include <fcntl.h>      // open()

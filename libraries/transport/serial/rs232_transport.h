@@ -3,7 +3,7 @@
 
 #include "../interface/i_transport.h"
 #include "../../../utils/logger.h"
-#include "../enum_/enum_baudrate.h" // Enum BaudRate (B9600, B115200 etc.)
+#include "../../transport/enum_/enum_bauntrate.h" // Enum BaudRate (B9600, B115200 etc.)
 #include <memory>
 #include <string>
 #include <vector>

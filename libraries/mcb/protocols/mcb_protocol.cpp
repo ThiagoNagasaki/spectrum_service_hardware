@@ -1,16 +1,12 @@
 #include "mcb_protocol.h"
-#include "../config/mcb_constants.h"            // STX, ETX, enum MCBCommand
+#include "../config/mcb_constants.h"           // STX, ETX, MCBCommand
 #include "../../../utils/logger.h"
-#include "../../../utils/enum_/enum_commandcontext.h" // Para CommandContext::GENERAL
-#include <numeric>    // std::accumulate
-#include <iostream>   // Se quiser logs extras
+#include "../../../utils/enum_/enum_commandcontext.h" // CommandContext
+#include <numeric>   // std::accumulate
 #include <cstdint>
-#include <cstdio>     // std::snprintf
+#include <cstdio>    // std::snprintf
 
 namespace mcb::protocols {
-
-// Tamanho mínimo de um frame: STX(1) + Tamanho(1) + Comando(1) + Checksum(1) + ETX(1) = 5
-static constexpr size_t MIN_FRAME_SIZE = 5;
 
 /**
  * \class MCBProtocol::Impl
@@ -18,27 +14,28 @@ static constexpr size_t MIN_FRAME_SIZE = 5;
  */
 class MCBProtocol::Impl {
 public:
-    // Construtor: recebe referência para logger
+    // Construtor recebe referência para logger
     explicit Impl(utils::Logger& loggerRef)
         : logger_(loggerRef) {}
 
     // Monta frame
-    std::vector<uint8_t> buildFrame(MCBCommand cmd, const std::vector<uint8_t>& payload) const {
+    std::vector<uint8_t> buildFrame(mcb::config::MCBCommand cmd, const std::vector<uint8_t>& payload) const {
         // Log de debug
         logger_.debug(utils::enum_::CommandContext::HARDWARE,
                       "Montando frame para comando 0x" + toHex(static_cast<uint8_t>(cmd)));
 
+        // Frame = [STX, length, command, data..., checksum, ETX]
         std::vector<uint8_t> frame;
         frame.reserve(5 + payload.size());
 
         // 1) STX
-        frame.push_back(STX);
+        frame.push_back(mcb::config::STX);
 
         // 2) length = 1 (comando) + payload.size()
         uint8_t length = static_cast<uint8_t>(1 + payload.size());
         frame.push_back(length);
 
-        // 3) comando (FALTAVA no seu snippet original)
+        // 3) comando
         frame.push_back(static_cast<uint8_t>(cmd));
 
         // 4) data
@@ -49,47 +46,50 @@ public:
         frame.push_back(chksum);
 
         // 6) ETX
-        frame.push_back(ETX);
+        frame.push_back(mcb::config::ETX);
 
         logger_.debug(utils::enum_::CommandContext::HARDWARE,
                       "Frame montado com " + std::to_string(frame.size()) + " bytes.");
-
         return frame;
     }
 
     // Parseia frame
     std::optional<MCBFrame> parseFrame(const std::vector<uint8_t>& buffer) const {
-        if (buffer.size() < MIN_FRAME_SIZE) {
+        // Verifica tamanho mínimo
+        if (buffer.size() < mcb::config::MCB_MIN_FRAME_SIZE) {
             logger_.warning(utils::enum_::CommandContext::HARDWARE,
-                            "Buffer muito curto para ser um frame MCB.");
-            return std::nullopt;
-        }
-        if (buffer.front() != STX) {
-            logger_.warning(utils::enum_::CommandContext::HARDWARE,
-                            "STX inválido: 0x" + toHex(buffer.front()));
-            return std::nullopt;
-        }
-        if (buffer.back() != ETX) {
-            logger_.warning(utils::enum_::CommandContext::HARDWARE,
-                            "ETX inválido: 0x" + toHex(buffer.back()));
+                            0,"Buffer muito curto para ser um frame MCB.");
             return std::nullopt;
         }
 
-        // Lê tamanho
+        // Verifica STX e ETX
+        if (buffer.front() != mcb::config::STX) {
+            logger_.warning(utils::enum_::CommandContext::HARDWARE,
+                            0,"STX inválido: 0x" + toHex(buffer.front()));
+            return std::nullopt;
+        }
+        if (buffer.back() != mcb::config::ETX) {
+            logger_.warning(utils::enum_::CommandContext::HARDWARE,
+                            0,"ETX inválido: 0x" + toHex(buffer.back()));
+            return std::nullopt;
+        }
+
+        // Lê length
         uint8_t length = buffer[1];
         // Tamanho total esperado = STX(1) + Tamanho(1) + length + Checksum(1) + ETX(1) = length + 4
         if (buffer.size() != static_cast<size_t>(length + 4)) {
-            logger_.warning(utils::enum_::CommandContext::HARDWARE,
+            logger_.warning(utils::enum_::CommandContext::HARDWARE,0,
                             "Tamanho inconsistente. Esperado=" + std::to_string(length + 4) +
                             ", real=" + std::to_string(buffer.size()));
             return std::nullopt;
         }
 
+        // Comando
         uint8_t cmdByte = buffer[2];
-        MCBCommand cmd = toMCBCommand(cmdByte);
+        mcb::config::MCBCommand cmd = toMCBCommand(cmdByte);
 
         // Data = bytes [3..(3 + dataSize - 1)]
-        size_t dataSize = length - 1; // retira 1 para o comando
+        size_t dataSize = length - 1; // retira 1 do comando
         std::vector<uint8_t> data;
         data.reserve(dataSize);
         if (dataSize > 0) {
@@ -102,13 +102,13 @@ public:
         // Recalcula
         uint8_t computed = calculateChecksum(cmd, data);
         if (computed != chksum) {
-            logger_.warning(utils::enum_::CommandContext::HARDWARE,
+            logger_.warning(utils::enum_::CommandContext::HARDWARE,0,
                             "Checksum inválido. Calc=0x" + toHex(computed) +
                             ", recebido=0x" + toHex(chksum));
             return std::nullopt;
         }
 
-        // Monta frame
+        // Monta MCBFrame
         MCBFrame frame;
         frame.command = cmd;
         frame.data    = std::move(data);
@@ -122,25 +122,25 @@ public:
 private:
     utils::Logger& logger_;
 
-    // Converte byte para string hexa
+    // Converte byte em string hexa
     static std::string toHex(uint8_t b) {
         char buf[4];
         std::snprintf(buf, sizeof(buf), "%02X", b);
         return std::string(buf);
     }
 
-    // Mapeia cmdByte em MCBCommand
-    static MCBCommand toMCBCommand(uint8_t cmdByte) {
+    // Mapeia cmdByte -> MCBCommand
+    static mcb::config::MCBCommand toMCBCommand(uint8_t cmdByte) {
+        using mcb::config::MCBCommand;
         switch (cmdByte) {
             case 0x51: return MCBCommand::READ_FIRMWARE;
             case 0x52: return MCBCommand::READ_STATUS;
-            // ... e assim por diante, conforme seu manual ...
             default:   return MCBCommand::UNKNOWN;
         }
     }
 
-    // Calcula checksum = soma(Comando + Data) mod 256
-    static uint8_t calculateChecksum(MCBCommand cmd, const std::vector<uint8_t>& payload) {
+    // Soma(Comando + Data) mod 256
+    static uint8_t calculateChecksum(mcb::config::MCBCommand cmd, const std::vector<uint8_t>& payload) {
         uint32_t sum = static_cast<uint8_t>(cmd);
         for (auto b : payload) {
             sum += b;
@@ -149,14 +149,14 @@ private:
     }
 };
 
-// ================== Métodos públicos de MCBProtocol ==================
+// =========== MCBProtocol ===========
 
 MCBProtocol::MCBProtocol(utils::Logger& logger)
     : pImpl_(std::make_unique<Impl>(logger)) {}
 
 MCBProtocol::~MCBProtocol() = default;
 
-std::vector<uint8_t> MCBProtocol::buildFrame(MCBCommand cmd, const std::vector<uint8_t>& payload) const {
+std::vector<uint8_t> MCBProtocol::buildFrame(mcb::config::MCBCommand cmd, const std::vector<uint8_t>& payload) const {
     return pImpl_->buildFrame(cmd, payload);
 }
 

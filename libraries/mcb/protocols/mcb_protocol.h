@@ -1,8 +1,8 @@
 #ifndef MCB_PROTOCOL_H
 #define MCB_PROTOCOL_H
 
-#include "../config/mcb_constants.h"         // Para STX, ETX, MCBCommand
-#include "../../../utils/logger.h"           // Para utils::Logger
+#include "../config/mcb_constants.h"   // STX, ETX, MCBCommand
+#include "../../../utils/logger.h"     // utils::Logger
 #include <vector>
 #include <optional>
 #include <memory>
@@ -13,8 +13,8 @@ namespace mcb::protocols {
  * \brief Estrutura representando um frame MCB decodificado.
  */
 struct MCBFrame {
-    MCBCommand command;          ///< Comando (ex.: 0x51, 0x52 etc.)
-    std::vector<uint8_t> data;   ///< Dados do frame (payload)
+    mcb::config::MCBCommand command; ///< Comando (ex.: 0x51, 0x52 etc.)
+    std::vector<uint8_t> data;       ///< Dados do frame (payload)
 };
 
 /**
@@ -30,12 +30,12 @@ class MCBProtocol {
 public:
     /**
      * \brief Construtor que recebe referência a um \c Logger.
-     * \param logger Instância de logger (PImpl) para registrar logs.
+     * \param logger Instância de logger para registrar logs.
      */
     explicit MCBProtocol(utils::Logger& logger);
 
     /**
-     * \brief Destrutor padrão.
+     * \brief Destrutor.
      */
     ~MCBProtocol();
 
@@ -45,7 +45,7 @@ public:
      * \param payload Bytes de dados do comando.
      * \return Vetor de bytes representando o frame completo.
      */
-    std::vector<uint8_t> buildFrame(MCBCommand cmd, const std::vector<uint8_t>& payload) const;
+    std::vector<uint8_t> buildFrame(mcb::config::MCBCommand cmd, const std::vector<uint8_t>& payload) const;
 
     /**
      * \brief Tenta analisar um buffer como um frame MCB.
@@ -57,7 +57,7 @@ public:
 
 private:
     /**
-     * \brief Classe interna que contém toda a implementação (PImpl).
+     * \brief Classe interna (PImpl) que contém toda a lógica.
      */
     class Impl;
 
