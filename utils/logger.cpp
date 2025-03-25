@@ -9,6 +9,9 @@ namespace utils {
 using enum_::CommandContext;
 using enum_::ErrorCode;
 
+/**
+ * \brief Arrays para mapear enum -> string (opcional).
+ */
 static const std::string ContextString[] = {
     "HARDWARE", "USER", "UNKNOWN"
 };
@@ -17,6 +20,10 @@ static const std::string ErrorCodeString[] = {
     "GeneratorConnectionError"
 };
 
+/**
+ * \class Logger::Impl
+ * \brief Implementação interna do Logger (PImpl).
+ */
 class Logger::Impl {
 public:
     void init(const std::string& logFileName) {
@@ -40,12 +47,14 @@ public:
         }
     }
 
+    // Mapear CommandContext -> string
     std::string contextToString(CommandContext context) {
         int index = static_cast<int>(context);
         constexpr int maxIndex = sizeof(ContextString) / sizeof(std::string);
         return (index < 0 || index >= maxIndex) ? ContextString[2] : ContextString[index];
     }
 
+    // Mapear ErrorCode -> string
     std::string errorCodeToString(ErrorCode code) {
         int index = static_cast<int>(code);
         constexpr int maxIndex = sizeof(ErrorCodeString) / sizeof(std::string);
@@ -65,15 +74,21 @@ public:
     }
 
     void warning(CommandContext context, ErrorCode code, const std::string& message) {
-        if (initialized_) spdlog::warn("[{}][{}] {}", contextToString(context), errorCodeToString(code), message);
+        if (initialized_) {
+            spdlog::warn("[{}][{}] {}", contextToString(context), errorCodeToString(code), message);
+        }
     }
 
     void error(CommandContext context, ErrorCode code, const std::string& message) {
-        if (initialized_) spdlog::error("[{}][{}] {}", contextToString(context), errorCodeToString(code), message);
+        if (initialized_) {
+            spdlog::error("[{}][{}] {}", contextToString(context), errorCodeToString(code), message);
+        }
     }
 
     void fatal(CommandContext context, ErrorCode code, const std::string& message) {
-        if (initialized_) spdlog::critical("[{}][{}] {}", contextToString(context), errorCodeToString(code), message);
+        if (initialized_) {
+            spdlog::critical("[{}][{}] {}", contextToString(context), errorCodeToString(code), message);
+        }
     }
 
 private:
@@ -81,16 +96,46 @@ private:
     std::shared_ptr<spdlog::logger> logger_;
 };
 
-// Encapsulamento público
-Logger::Logger() : pImpl_(std::make_unique<Impl>()) {}
+// ---------------- Logger Singleton Implementation ----------------
+
+Logger::Logger()
+    : pImpl_(std::make_unique<Impl>())
+{
+}
+
 Logger::~Logger() = default;
 
-void Logger::init(const std::string& logFileName) { pImpl_->init(logFileName); }
-void Logger::trace(CommandContext context, const std::string& message) { pImpl_->trace(context, message); }
-void Logger::debug(CommandContext context, const std::string& message) { pImpl_->debug(context, message); }
-void Logger::info(CommandContext context, const std::string& message) { pImpl_->info(context, message); }
-void Logger::warning(CommandContext context, ErrorCode code, const std::string& message) { pImpl_->warning(context, code, message); }
-void Logger::error(CommandContext context, ErrorCode code, const std::string& message) { pImpl_->error(context, code, message); }
-void Logger::fatal(CommandContext context, ErrorCode code, const std::string& message) { pImpl_->fatal(context, code, message); }
+Logger& Logger::instance() {
+    static Logger s_instance; 
+    return s_instance;
+}
+
+void Logger::init(const std::string& logFileName) {
+    pImpl_->init(logFileName);
+}
+
+void Logger::trace(CommandContext context, const std::string& message) {
+    pImpl_->trace(context, message);
+}
+
+void Logger::debug(CommandContext context, const std::string& message) {
+    pImpl_->debug(context, message);
+}
+
+void Logger::info(CommandContext context, const std::string& message) {
+    pImpl_->info(context, message);
+}
+
+void Logger::warning(CommandContext context, ErrorCode code, const std::string& message) {
+    pImpl_->warning(context, code, message);
+}
+
+void Logger::error(CommandContext context, ErrorCode code, const std::string& message) {
+    pImpl_->error(context, code, message);
+}
+
+void Logger::fatal(CommandContext context, ErrorCode code, const std::string& message) {
+    pImpl_->fatal(context, code, message);
+}
 
 } // namespace utils

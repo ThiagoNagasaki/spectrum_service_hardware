@@ -1,28 +1,29 @@
 #include "serial_transport.h"
 #include "../enum_/enum_transportstatus.h"
-#include "../../../utils/logger.h"
+#include "../enum_/enum_baudrate.h"
+#include "../../../utils/logger.h"                 // Singleton Logger
 #include "../../../utils/enum_/enum_commandcontext.h"
 #include "../../../utils/enum_/enum_errorcode.h"
 
 #include <fmt/core.h>
 #include <fcntl.h>      // open()
 #include <unistd.h>     // close()
-#include <termios.h>    // termios, tcgetattr, tcsetattr
+#include <termios.h>    // termios, tcgetattr, tcsetattr, B9600 etc.
 #include <cstring>
 #include <iostream>
 
 namespace transport::serial {
 
 using transport::enum_::TransportStatus;
+using transport::enum_::BaudRate;
 using utils::Logger;
 using utils::enum_::CommandContext;
 using utils::enum_::ErrorCode;
 
 /**
- * \brief Mapeia nosso enum BaudRate para as constantes speed_t do POSIX.
+ * \brief Mapeia enum BaudRate para speed_t do POSIX.
  */
-static speed_t to_speed_t(BaudRate rate)
-{
+static speed_t to_speed_t(BaudRate rate) {
     switch (rate) {
         case BaudRate::BR_4800:   return B4800;
         case BaudRate::BR_9600:   return B9600;
@@ -31,15 +32,13 @@ static speed_t to_speed_t(BaudRate rate)
         case BaudRate::BR_57600:  return B57600;
         case BaudRate::BR_115200: return B115200;
         default:
-            // fallback
-            return B9600;
+            return B9600; // fallback
     }
 }
 
 /**
  * \class SerialTransport::Impl
- * \brief Implementação interna (oculta) do transporte serial.
- *
+ * \brief Implementação interna (PImpl) do transporte serial.
  */
 class SerialTransport::Impl {
 public:
@@ -50,7 +49,10 @@ public:
         , fd_(-1)
         , status_(TransportStatus::Disconnected)
     {
-        logger_.init();
+
+        Logger::instance().debug(CommandContext::HARDWARE,
+            fmt::format("SerialTransport Impl criado para {} (tipo={}, baud={})",
+                        device_, toString(type_), static_cast<int>(baud_rate_)));
     }
 
     ~Impl() {
@@ -59,23 +61,23 @@ public:
 
     bool connect() {
         if (status_ == TransportStatus::Connected) {
-            logger_.debug(CommandContext::HARDWARE,
-                          fmt::format("SerialTransport ({}): já está conectado em {}", type_to_string(type_), device_));
+            Logger::instance().debug(CommandContext::HARDWARE,
+                fmt::format("SerialTransport ({}): já conectado em {}", toString(type_), device_));
             return true;
         }
 
         fd_ = ::open(device_.c_str(), O_RDWR | O_NOCTTY);
         if (fd_ < 0) {
-            logger_.error(CommandContext::HARDWARE, ErrorCode::GeneratorConnectionError,
-                          fmt::format("Erro ao abrir porta {} (tipo: {})", device_, type_to_string(type_)));
+            Logger::instance().error(CommandContext::HARDWARE, ErrorCode::GeneratorConnectionError,
+                fmt::format("Erro ao abrir porta {} (tipo: {})", device_, toString(type_)));
             status_ = TransportStatus::Error;
             return false;
         }
 
         struct termios tty{};
         if (::tcgetattr(fd_, &tty) != 0) {
-            logger_.error(CommandContext::HARDWARE, ErrorCode::GeneratorConnectionError,
-                          fmt::format("Erro ao obter atributos da porta {} (tipo: {})", device_, type_to_string(type_)));
+            Logger::instance().error(CommandContext::HARDWARE, ErrorCode::GeneratorConnectionError,
+                fmt::format("Erro ao obter atributos da porta {} (tipo: {})", device_, toString(type_)));
             status_ = TransportStatus::Error;
             return false;
         }
@@ -92,18 +94,17 @@ public:
         tty.c_cflag &= ~CSIZE;
         tty.c_cflag |= CS8;
 
-
         if (::tcsetattr(fd_, TCSANOW, &tty) != 0) {
-            logger_.error(CommandContext::HARDWARE, ErrorCode::GeneratorConnectionError,
-                          fmt::format("Erro ao configurar porta {} (tipo: {})", device_, type_to_string(type_)));
+            Logger::instance().error(CommandContext::HARDWARE, ErrorCode::GeneratorConnectionError,
+                fmt::format("Erro ao configurar porta {} (tipo: {})", device_, toString(type_)));
             status_ = TransportStatus::Error;
             return false;
         }
 
         status_ = TransportStatus::Connected;
-        logger_.info(CommandContext::HARDWARE,
-                     fmt::format("Conectado à porta {} (tipo: {}, baud: {})",
-                                 device_, type_to_string(type_), baud_rate_to_string(baud_rate_)));
+        Logger::instance().info(CommandContext::HARDWARE,
+            fmt::format("Conectado à porta {} (tipo: {}, baud: {})",
+                        device_, toString(type_), baudRateToString(baud_rate_)));
         return true;
     }
 
@@ -113,31 +114,30 @@ public:
             fd_ = -1;
         }
         status_ = TransportStatus::Disconnected;
-        logger_.info(CommandContext::HARDWARE,
-                     fmt::format("Porta {} (tipo: {}) desconectada",
-                                 device_, type_to_string(type_)));
+        Logger::instance().info(CommandContext::HARDWARE,
+            fmt::format("Porta {} (tipo: {}) desconectada", device_, toString(type_)));
         return true;
     }
 
     bool send(const std::vector<uint8_t>& data) {
         if (status_ != TransportStatus::Connected || fd_ < 0) {
-            logger_.warning(CommandContext::HARDWARE, ErrorCode::GeneratorConnectionError,
-                            fmt::format("Tentativa de envio sem conexão na porta {} (tipo: {})",
-                                        device_, type_to_string(type_)));
+            Logger::instance().warning(CommandContext::HARDWARE, ErrorCode::GeneratorConnectionError,
+                fmt::format("Tentativa de envio sem conexão na porta {} (tipo: {})",
+                            device_, toString(type_)));
             return false;
         }
 
         ssize_t bytes_written = ::write(fd_, data.data(), data.size());
         if (bytes_written < 0 || static_cast<size_t>(bytes_written) != data.size()) {
-            logger_.error(CommandContext::HARDWARE, ErrorCode::GeneratorConnectionError,
-                          fmt::format("Falha ao enviar dados pela porta {} (tipo: {})",
-                                      device_, type_to_string(type_)));
+            Logger::instance().error(CommandContext::HARDWARE, ErrorCode::GeneratorConnectionError,
+                fmt::format("Falha ao enviar dados pela porta {} (tipo: {})",
+                            device_, toString(type_)));
             return false;
         }
 
-        logger_.debug(CommandContext::HARDWARE,
-                      fmt::format("Enviados {} bytes pela porta {} (tipo: {})",
-                                  bytes_written, device_, type_to_string(type_)));
+        Logger::instance().debug(CommandContext::HARDWARE,
+            fmt::format("Enviados {} bytes pela porta {} (tipo: {})",
+                        bytes_written, device_, toString(type_)));
         return true;
     }
 
@@ -153,26 +153,26 @@ private:
     /**
      * \brief Converte SerialType em string para logs.
      */
-    static std::string type_to_string(SerialType t) {
+    static std::string toString(SerialType t) {
         switch (t) {
-        case SerialType::RS232: return "RS232";
-        case SerialType::RS485: return "RS485";
-        default:                return "Desconhecido";
+            case SerialType::RS232: return "RS232";
+            case SerialType::RS485: return "RS485";
+            default:                return "Desconhecido";
         }
     }
 
     /**
      * \brief Converte BaudRate em string para logs.
      */
-    static std::string baud_rate_to_string(BaudRate br) {
+    static std::string baudRateToString(BaudRate br) {
         switch (br) {
-        case BaudRate::BR_4800:   return "4800";
-        case BaudRate::BR_9600:   return "9600";
-        case BaudRate::BR_19200:  return "19200";
-        case BaudRate::BR_38400:  return "38400";
-        case BaudRate::BR_57600:  return "57600";
-        case BaudRate::BR_115200: return "115200";
-        default:                  return "Desconhecido";
+            case BaudRate::BR_4800:   return "4800";
+            case BaudRate::BR_9600:   return "9600";
+            case BaudRate::BR_19200:  return "19200";
+            case BaudRate::BR_38400:  return "38400";
+            case BaudRate::BR_57600:  return "57600";
+            case BaudRate::BR_115200: return "115200";
+            default:                  return "Desconhecido";
         }
     }
 
@@ -182,7 +182,6 @@ private:
     int fd_;
     TransportStatus status_;
 
-    Logger logger_;
     std::function<void(const std::vector<uint8_t>&)> receive_callback_;
 };
 

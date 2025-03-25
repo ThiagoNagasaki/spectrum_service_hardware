@@ -18,6 +18,7 @@ enum class ErrorCode {
     RS485ConnectionFailure,
     RS485ConfigurationFailure,
     RS485DataSendFailure,
+    ProtocolError,
     
 
 };

@@ -5,6 +5,9 @@
 #include "../interface/i_transport.h"              // ITransport
 #include <memory>
 #include <string>
+#include <vector>
+#include <functional>
+#include <cstdint>
 
 namespace transport::network {
 
@@ -31,8 +34,7 @@ struct TCPConfig {
 class TCPTransport : public interface::ITransport {
 public:
     /**
-     * \brief Construtor que recebe configurações TCP.
-     * \param config Estrutura contendo IP e porta do servidor.
+     * \brief Construtor que recebe configurações TCP (IP e porta).
      */
     explicit TCPTransport(const TCPConfig& config);
 

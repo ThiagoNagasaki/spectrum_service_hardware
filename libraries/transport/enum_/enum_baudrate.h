@@ -8,14 +8,15 @@ namespace transport::enum_ {
  * \brief Enum que representa as velocidades de comunicação suportadas.
  */
 enum class BaudRate {
-    B4800,
-    B9600,
-    B19200,
-    B38400,
-    B57600,
-    B115200
+    BR_4800,
+    BR_9600,
+    BR_19200,
+    BR_38400,
+    BR_57600,
+    BR_115200
 };
 
 } // namespace transport::enum_
 
 #endif // BAUD_RATE_H
+ 

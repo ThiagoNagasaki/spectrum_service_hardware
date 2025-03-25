@@ -3,7 +3,7 @@
 
 #include "../interface/i_transport.h"
 #include "../../../utils/logger.h"
-#include "../../transport/enum_/enum_bauntrate.h" // Enum BaudRate (B9600, B115200 etc.)
+#include "../../transport/enum_/enum_baudrate.h" // Enum BaudRate (BR_9600, BR_115200, etc.)
 #include <memory>
 #include <string>
 #include <vector>
@@ -16,7 +16,7 @@ namespace transport::serial {
  * \class RS232Transport
  * \brief Implementa ITransport para comunicação RS232 usando PImpl.
  *
- * - Construtor recebe dispositivo (ex.: "/dev/ttyS0") e baud rate (ex.: BaudRate::B115200).
+ * - Construtor recebe dispositivo (ex.: "/dev/ttyS0") e baud rate (ex.: BaudRate::BR_115200).
  * - \c connect() abre a porta e configura 8N1 (sem paridade, 1 stop bit).
  * - \c disconnect() fecha a porta.
  * - \c send() envia dados.
@@ -28,7 +28,7 @@ public:
     /**
      * \brief Construtor que define dispositivo e velocidade.
      * \param device Caminho do dispositivo serial (ex.: "/dev/ttyS0").
-     * \param baud_rate Enum que representa a velocidade (ex.: BaudRate::B115200).
+     * \param baud_rate Enum que representa a velocidade (ex.: BaudRate::BR_115200).
      */
     RS232Transport(const std::string& device, enum_::BaudRate baud_rate);
 

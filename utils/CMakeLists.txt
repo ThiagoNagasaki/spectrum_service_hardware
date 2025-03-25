@@ -1,3 +1,4 @@
+# Em spectrum_service_hardware/utils/CMakeLists.txt
 add_library(utils_logger
     logger.cpp
 )

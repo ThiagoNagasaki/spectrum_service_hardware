@@ -1,8 +1,7 @@
 #ifndef MCB_PROTOCOL_H
 #define MCB_PROTOCOL_H
 
-#include "../config/mcb_constants.h"   // STX, ETX, MCBCommand
-#include "../../../utils/logger.h"     // utils::Logger
+#include "../config/mcb_constants.h"  // STX, ETX, MCBCommand, MCB_MIN_FRAME_SIZE
 #include <vector>
 #include <optional>
 #include <memory>
@@ -10,7 +9,7 @@
 namespace mcb::protocols {
 
 /**
- * \brief Estrutura representando um frame MCB decodificado.
+ * \brief Estrutura que representa um frame MCB decodificado.
  */
 struct MCBFrame {
     mcb::config::MCBCommand command; ///< Comando (ex.: 0x51, 0x52 etc.)
@@ -19,20 +18,20 @@ struct MCBFrame {
 
 /**
  * \class MCBProtocol
- * \brief Classe para manipular frames do protocolo MCB, usando PImpl.
+ * \brief Classe para manipular frames do protocolo MCB, usando PImpl e Singleton logger.
  *
  * Métodos principais:
- *  - buildFrame(): gera o frame [STX, length, command, data..., checksum, ETX].
- *  - parseFrame(): valida buffer, checa STX, ETX, tamanho e checksum.
- *  - Usa \c utils::Logger para registrar mensagens (debug, warning, etc.).
+ *  - buildFrame(): Gera o frame [STX, length, command, data..., checksum, ETX].
+ *  - parseFrame(): Valida buffer, checa STX, ETX, tamanho e checksum.
+ *  - Faz logs via \c Logger::instance().
  */
 class MCBProtocol {
 public:
     /**
-     * \brief Construtor que recebe referência a um \c Logger.
-     * \param logger Instância de logger para registrar logs.
+     * \brief Construtor padrão.
+     *        Logger Singleton será acessado internamente.
      */
-    explicit MCBProtocol(utils::Logger& logger);
+    MCBProtocol();
 
     /**
      * \brief Destrutor.
@@ -45,24 +44,25 @@ public:
      * \param payload Bytes de dados do comando.
      * \return Vetor de bytes representando o frame completo.
      */
-    std::vector<uint8_t> buildFrame(mcb::config::MCBCommand cmd, const std::vector<uint8_t>& payload) const;
+    std::vector<uint8_t> buildFrame(mcb::config::MCBCommand cmd, 
+                                    const std::vector<uint8_t>& payload) const;
 
     /**
      * \brief Tenta analisar um buffer como um frame MCB.
      * \param buffer Buffer de bytes a analisar.
-     * \return \c std::optional<MCBFrame> contendo o frame decodificado,
-     *         ou \c std::nullopt se falhar (ex.: checksum inválido).
+     * \return std::optional<MCBFrame> contendo o frame decodificado,
+     *         ou std::nullopt se falhar (ex.: checksum inválido).
      */
     std::optional<MCBFrame> parseFrame(const std::vector<uint8_t>& buffer) const;
 
 private:
     /**
-     * \brief Classe interna (PImpl) que contém toda a lógica.
+     * \brief Classe interna (PImpl) com toda a lógica do protocolo.
      */
     class Impl;
 
     /**
-     * \brief Ponteiro para a implementação oculta.
+     * \brief Ponteiro único para a implementação oculta.
      */
     std::unique_ptr<Impl> pImpl_;
 };

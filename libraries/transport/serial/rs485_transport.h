@@ -2,7 +2,7 @@
 #define RS485_TRANSPORT_H
 
 #include "../interface/i_transport.h"
-#include "../enum_/enum_bauntrate.h"
+#include "../..//transport/enum_/enum_baudrate.h"   
 #include <memory>
 #include <string>
 #include <vector>
@@ -15,7 +15,7 @@ namespace transport::serial {
  * \class RS485Transport
  * \brief Implementa ITransport para comunicação RS485 usando PImpl.
  *
- * - Construtor recebe dispositivo e baud rate (ex.: "/dev/ttyS1", BaudRate::B9600).
+ * - Construtor recebe dispositivo e baud rate (ex.: "/dev/ttyS1", BaudRate::BR_9600).
  * - \c connect() abre a porta e configura 8N1.
  * - \c disconnect() fecha a porta.
  * - \c send() envia dados.
@@ -29,6 +29,9 @@ public:
      */
     RS485Transport(const std::string& device, enum_::BaudRate baud_rate);
 
+    /**
+     * \brief Destrutor, garante desconexão.
+     */
     ~RS485Transport() override;
 
     bool connect() override;
