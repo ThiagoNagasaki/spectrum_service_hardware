@@ -13,6 +13,7 @@ find_package(fmt CONFIG REQUIRED)
 add_subdirectory(utils)
 add_subdirectory(libraries)
 add_subdirectory(tests)
+ 
 
 add_executable(spectrum_service main.cpp)
 target_link_libraries(spectrum_service
@@ -20,6 +21,7 @@ target_link_libraries(spectrum_service
         utils_logger        # lib gerada em utils/CMakeLists.txt
         mcb_protocol        # lib gerada em libraries/mcb/CMakeLists.txt
         transport_core      # lib gerada em libraries/transport/CMakeLists.txt
+        keyboard_protocol   # lib gerada em libraries/keyboard/CMakeLists.txt
         fmt::fmt
         spdlog::spdlog
 )

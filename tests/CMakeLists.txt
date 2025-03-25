@@ -5,6 +5,7 @@ target_link_libraries(teste_tcp_transport
         utils_logger
         transport_core
         mcb_protocol
+        keyboard_protocol
         fmt::fmt
         spdlog::spdlog
 )
