@@ -134,7 +134,6 @@ private:
         switch (cmdByte) {
             case 0x51: return MCBCommand::READ_FIRMWARE;
             case 0x52: return MCBCommand::READ_STATUS;
-            // adicione outros se precisar
             default:   return MCBCommand::UNKNOWN;
         }
     }
