@@ -19,9 +19,9 @@ add_executable(spectrum_service main.cpp)
 target_link_libraries(spectrum_service
     PRIVATE
         utils_logger        # lib gerada em utils/CMakeLists.txt
-        mcb_protocol        # lib gerada em libraries/mcb/CMakeLists.txt
+        mcb_core        # lib gerada em libraries/mcb/CMakeLists.txt
         transport_core      # lib gerada em libraries/transport/CMakeLists.txt
-        keyboard_protocol   # lib gerada em libraries/keyboard/CMakeLists.txt
+        keyboard_core   # lib gerada em libraries/keyboard/CMakeLists.txt
         fmt::fmt
         spdlog::spdlog
 )
