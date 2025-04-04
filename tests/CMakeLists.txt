@@ -5,7 +5,7 @@ project(tests LANGUAGES CXX)
 find_package(GTest CONFIG REQUIRED)
 
 # Crie seu executável de testes
-add_executable(teste_esteira teste_esteira.cpp )
+add_executable(teste_esteira teste_esteira.cpp)
 
 target_link_libraries(teste_esteira
     PRIVATE

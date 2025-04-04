@@ -1,0 +1,6 @@
+[15:56:41.137] [debug] [multi_sink] [USER] TCPTransport Impl criado para 192.168.100.1:3000
+[15:56:41.137] [debug] [multi_sink] [USER] TCPTransport Impl criado para 192.168.100.1:3001
+[15:56:44.235] [error] [multi_sink] [USER][UnknownError] Falha ao conectar em 192.168.100.1:3000
+[15:56:47.192] [debug] [multi_sink] [USER] TCPTransport Impl criado para 192.168.100.1:3000
+[15:56:47.192] [debug] [multi_sink] [USER] TCPTransport Impl criado para 192.168.100.1:3001
+[15:56:50.251] [error] [multi_sink] [USER][UnknownError] Falha ao conectar em 192.168.100.1:3000
