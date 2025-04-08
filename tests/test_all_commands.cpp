@@ -136,8 +136,8 @@ int main() {
     // Configura as conexões TCP:
     // - MCB na porta 3000
     // - Teclado na porta 3001 
-    TCPConfig configMcb{"192.168.100.1", 3000};
-    TCPConfig configKbd{"192.168.100.1", 3001};
+    TCPConfig configMcb{"127.0.0.1", 3000};
+    TCPConfig configKbd{"127.0.0.1", 3001};
 
     TCPTransport tcpMcb(configMcb);
     TCPTransport tcpKbd(configKbd);

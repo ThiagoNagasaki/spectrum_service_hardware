@@ -2,6 +2,7 @@
 add_library(keyboard_core
     protocols/keyboard_protocol.cpp
     decoder/keyboard_decoder.cpp
+    receiver/keyboard_receiver.cpp
 )
 
 # Define onde buscar .h
@@ -9,6 +10,7 @@ target_include_directories(keyboard_core PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/protocols>
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/config>
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/decoder>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/receiver>
 )
 
 # Linkar com as libs necessárias:

@@ -82,7 +82,7 @@ void onMCBDataReceived(const vector<uint8_t>& incoming, MCBDecoder& decoder) {
 
 int main() {
     // Configuração da conexão TCP com a MCB (exemplo: IP 192.168.100.1 e porta 3000)
-    TCPConfig config{"192.168.100.1", 3000};
+    TCPConfig config{"127.0.0.1", 3000};
     TCPTransport tcp(config);
 
     cout << "Conectando à MCB em " << config.ip << ":" << config.port << "..." << endl;
