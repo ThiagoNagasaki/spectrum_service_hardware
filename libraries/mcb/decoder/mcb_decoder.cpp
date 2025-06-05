@@ -53,32 +53,47 @@ public:
         return oss.str();
     }
 
-    std::string decodeStatusPayload(const std::vector<uint8_t>& payload) const {
-        if (payload.size() < 2)
-            return "[ERRO] Payload de status insuficiente";
-        uint8_t b0 = payload[0];
-        uint8_t b1 = payload[1];
-        std::ostringstream oss;
-        oss << "Status da MCB:\n";
-        oss << "  Interlock/Emergência 0: " << ((b0 & 0x01) ? "Aberto" : "OK") << "\n";
-        oss << "  Interlock/Emergência 1: " << ((b0 & 0x02) ? "Aberto" : "OK") << "\n";
-        oss << "  Raio-X: " << ((b0 & 0x04) ? "Ligado" : "Desligado") << "\n";
-        oss << "  Sensor túnel 1: " << ((b0 & 0x08) ? "Ativado" : "Desativado") << "\n";
-        oss << "  Sensor túnel 2: " << ((b0 & 0x10) ? "Ativado" : "Desativado") << "\n";
-        oss << "  Sensor túnel 3: " << ((b0 & 0x20) ? "Ativado" : "Desativado") << "\n";
-        oss << "  Sensor túnel 4: " << ((b0 & 0x40) ? "Ativado" : "Desativado") << "\n";
-        oss << "  EXP2_IN: " << ((b0 & 0x80) ? "Ativado" : "Desligado") << "\n";
-        oss << "  Expansões (bits 0-4): ";
-        for (int i = 0; i < 5; i++) {
-            oss << (((b1 >> i) & 0x01) ? "1" : "0");
-        }
-        oss << "\n";
-        oss << "  Esteira: " << ((b1 & 0x20) ? "Ligada" : "Desligada") << "\n";
-        oss << "  Expansões (bits 6-7): " << ((b1 >> 6) & 0x03);
-        if (payload.size() >= 3)
-            oss << "\n  Extra: 0x" << std::hex << static_cast<int>(payload[2]);
-        return oss.str();
-    }
+   std::string decodeStatusPayload(const std::vector<uint8_t>& payload) const {
+    if (payload.size() < 2)
+        return "[ERRO] Payload de status insuficiente";
+
+    uint8_t b0 = payload[0];
+    uint8_t b1 = payload[1];
+    std::ostringstream oss;
+    oss << "Status da MCB:\n";
+    oss << "  Interlock/Emergência 0: " << ((b0 & 0x01) ? "Aberto" : "OK") << "\n";
+    oss << "  Interlock/Emergência 1: " << ((b0 & 0x02) ? "Aberto" : "OK") << "\n";
+    oss << "  Raio-X: " << ((b0 & 0x04) ? "Ligado" : "Desligado") << "\n";
+    oss << "  Sensor túnel 1: " << ((b0 & 0x08) ? "Ativado" : "Desativado") << "\n";
+    oss << "  Sensor túnel 2: " << ((b0 & 0x10) ? "Ativado" : "Desativado") << "\n";
+    oss << "  Sensor túnel 3: " << ((b0 & 0x20) ? "Ativado" : "Desativado") << "\n";
+    oss << "  Sensor túnel 4: " << ((b0 & 0x40) ? "Ativado" : "Desativado") << "\n";
+    oss << "  EXP2_IN: " << ((b0 & 0x80) ? "Ativado" : "Desligado") << "\n";
+    // Expansões específicas
+    bool sensorInfravermelho = b1 & 0x10;
+     oss << "  Sensor zurich: " << ((b1 & 0x10) ? "Ativado" : "Desativado") << "\n"; //ok
+    oss << "  Sensor Infravermelho (Exp0): " << (sensorInfravermelho ? "Ativado" : "Desativado") << "\n";
+        // Expansões específicas
+    bool ledVerde = b1 & 0x20;
+    bool ledVermelho = !ledVerde;
+    oss << "  Sensor túnel z: " << ((b1 & 0x10) ? "Ativado" : "Desativado") << "\n";
+    oss << "  LED Verde (Exp1): " << (ledVerde ? "Ligado" : "Desligado") << "\n";
+    oss << "  LED Vermelho: " << (ledVermelho ? "Ligado" : "Desligado") << "\n";
+    // oss << "  Outras expansões (Exp2-Exp4): ";
+    // for (int i = 0; i < 7; i++) {
+    //     oss << "Exp" << i << "=" << (((b1 >> i) & 0x01) ? "1" : "0") << " ";
+    // }
+    // oss << "\n";
+
+    // oss << "  Esteira: " << ((b1 & 0x20) ? "Ligada" : "Desligada") << "\n";
+    // oss << "  Expansões (bits 6-7): " << ((b1 >> 6) & 0x03);
+
+    // if (payload.size() >= 3)
+    //     oss << "\n  Extra: 0x" << std::hex << static_cast<int>(payload[2]);
+
+    return oss.str();
+}
+
 
     std::string decodeInputDigitalPayload(const std::vector<uint8_t>& payload) const {
         if (payload.empty())

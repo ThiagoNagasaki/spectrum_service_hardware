@@ -5,9 +5,9 @@ project(tests LANGUAGES CXX)
 find_package(GTest CONFIG REQUIRED)
 
 # Crie seu executável de testes
-add_executable(teste_read_mcb teste_read_mcb.cpp)
+add_executable(test_all_commands test_all_commands.cpp)
 
-target_link_libraries(teste_read_mcb
+target_link_libraries(test_all_commands
     PRIVATE
         utils_logger        # Sua biblioteca de logger
         transport_core      # Sua biblioteca de transportes

@@ -11,6 +11,9 @@
 #include <fmt/core.h>
 
 namespace mcb {
+using utils::Logger;
+using utils::enum_::CommandContext;
+using utils::enum_::ErrorCode;
 namespace receiver {
 
 class MCBReceiver::Impl {
@@ -70,8 +73,8 @@ private:
 
             std::string decoded = decoder.decodeFrame(frame);
             Logger::instance().debug(utils::enum_::CommandContext::HARDWARE, 
-                                     "MCBReceiver::Impl", 
-                                     fmt::format("Frame decodificado: {}", decoded));
+                                      
+                                     fmt::format("MCBReceiver::Impl Frame decodificado: {}", decoded));
             if (callback)
                 callback(decoded);
         }

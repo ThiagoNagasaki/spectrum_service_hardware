@@ -1,6 +1,7 @@
 #ifndef KEYBOARD_RECEIVER_H
 #define KEYBOARD_RECEIVER_H
 
+#include <cstdint>            // para uint8_t
 #include <functional>
 #include <memory>
 #include <string>

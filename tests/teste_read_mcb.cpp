@@ -8,11 +8,10 @@
 #include <sstream>
 #include <iomanip>
 #include <algorithm>
-#include "../libraries/mcb/protocols/mcb_protocol.h"     // MCBProtocol
-#include "../libraries/mcb/config/mcb_constants.h"         // MCBCommand, STX, ETX, MCB_MIN_FRAME_SIZE, etc.
-#include "../libraries/transport/network/tcp_transport.h"  // TCPTransport, TCPConfig
-#include "../libraries/mcb/decoder/mcb_decoder.h"          // MCBDecoder
-
+#include "../libraries/mcb/protocols/mcb_protocol.h" 
+#include "../libraries/mcb/config/mcb_constants.h" 
+#include "../libraries/transport/network/tcp_transport.h" 
+#include "../libraries/mcb/decoder/mcb_decoder.h" 
 using namespace std;
 
 // Converte um vetor de bytes em uma string hexadecimal (para debug)

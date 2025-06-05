@@ -66,6 +66,7 @@
         "format": "cpp",
         "charconv": "cpp",
         "chrono": "cpp",
-        "iomanip": "cpp"
+        "iomanip": "cpp",
+        "cinttypes": "cpp"
     }
 }
