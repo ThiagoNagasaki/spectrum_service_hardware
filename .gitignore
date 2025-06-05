@@ -72,7 +72,8 @@ CMakeUserPresets.json
 # Ignore all local history of files
 .history
 .ionide
-
+#conan_env
+conan_env/*
 # Directories
 build/
 
