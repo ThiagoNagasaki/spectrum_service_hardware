@@ -1,6 +1,6 @@
 #include "rs485_transport.h"
 #include "../enum_/enum_transportstatus.h"
-#include "../../../utils/logger.h"                    // Singleton Logger
+#include "../../../utils/logger/logger.h"                    // Singleton Logger
 #include "../../../utils/enum_/enum_commandcontext.h" // CommandContext
 #include "../../../utils/enum_/enum_errorcode.h"      // ErrorCode
 #include "../../transport/enum_/enum_baudrate.h"      // enum_::BaudRate

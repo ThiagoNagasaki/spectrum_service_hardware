@@ -73,7 +73,9 @@ CMakeUserPresets.json
 .history
 .ionide
 #conan_env
-conan_env/*
+conan_env/* 
+.venv
+conan_env
 # Directories
 build/
 

@@ -2,7 +2,7 @@
 #define RS232_TRANSPORT_H
 
 #include "../interface/i_transport.h"
-#include "../../../utils/logger.h"
+#include "../../../utils/logger/logger.h"
 #include "../../transport/enum_/enum_baudrate.h" // Enum BaudRate (BR_9600, BR_115200, etc.)
 #include <memory>
 #include <string>

@@ -1,8 +1,8 @@
 #include "tcp_transport.h"
 #include "../enum_/enum_transportstatus.h"
-#include "../../../utils/logger.h"                    // Singleton Logger
-#include "../../../utils/enum_/enum_commandcontext.h" // CommandContext
-#include "../../../utils/enum_/enum_errorcode.h"      // ErrorCode
+#include "../../utils/logger/logger.h"                    // Singleton Logger
+#include "../../utils/enum_/enum_commandcontext.h" // CommandContext
+#include "../../utils/enum_/enum_errorcode.h"      // ErrorCode
 
 #include <fmt/core.h>
 #include <thread>

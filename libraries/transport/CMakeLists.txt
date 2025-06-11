@@ -13,7 +13,10 @@ target_include_directories(transport_core PUBLIC
 )
 
 target_link_libraries(transport_core
+    PUBLIC
+        spdlog::spdlog
+        fmt::fmt
     PRIVATE
-        utils_logger
+        utils
 
 )

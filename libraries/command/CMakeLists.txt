@@ -1,0 +1,52 @@
+add_library(command_core
+    keyboard/read_key_pressed_command.cpp
+    keyboard/read_key_released_command.cpp
+    keyboard/read_version_command.cpp
+    keyboard/write_beep_tecla_command.cpp
+    keyboard/write_buzzer_command.cpp
+    keyboard/write_led_tecla_command.cpp
+    mcb/desliga_mcb_command.cpp
+    mcb/read_analog_input_command.cpp
+    mcb/read_chave_liga_command.cpp
+    mcb/read_data_hora_command.cpp
+    mcb/read_firmware_command.cpp    
+    mcb/read_info1_command.cpp
+    mcb/read_info2_command.cpp
+    mcb/read_info3_command.cpp
+    mcb/read_input_digital_command.cpp
+    mcb/read_mac_pc_command.cpp    
+    mcb/read_sensor_distance_command.cpp
+    mcb/read_status_command.cpp
+    mcb/read_status_special_command.cpp
+    mcb/write_analog_out_command.cpp
+    mcb/write_baud_uart1_command.cpp    
+    mcb/write_baud_uart2_command.cpp
+    mcb/write_config_command.cpp
+    mcb/write_data_hora_command.cpp
+    mcb/write_digital_out_command.cpp
+    mcb/write_digital_timer_command.cpp      
+    mcb/write_info1_command.cpp
+    mcb/write_info2_command.cpp
+    mcb/write_info3_command.cpp
+    mcb/write_mac_command.cpp
+    mcb/write_mac_pc_command.cpp    
+    mcb/write_network_config_command.cpp
+    mcb/write_special_command.cpp
+)
+
+target_include_directories(command_core PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/detectors>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/generators>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/keyboard>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/mcb>
+)
+
+target_link_libraries(command_core
+    PUBLIC
+        spdlog::spdlog
+        fmt::fmt
+    PRIVATE
+        utils
+
+)

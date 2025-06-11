@@ -29,8 +29,6 @@ enum class SerialType {
  * \brief Implementa a interface ITransport para prover comunicação serial
  *        (RS232 ou RS485) de forma genérica, usando PImpl.
  *
- * Configuração padrão (8 bits de dados, sem paridade, 1 stop bit).
- * Caso seja RS485 half-duplex, pode ser preciso controlar DE/RE via ioctl ou GPIO*******.
  */
 class SerialTransport : public interface::ITransport {
 public:
