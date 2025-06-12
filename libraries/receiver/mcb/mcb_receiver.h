@@ -10,7 +10,7 @@
 #include <memory>
 #include <vector>
 
-namespace command::mcb::receiver {
+namespace receiver::mcb {
 
 /**
  * \brief “Listener” de mensagens vindas da MCB.

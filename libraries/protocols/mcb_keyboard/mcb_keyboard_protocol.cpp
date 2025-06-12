@@ -1,19 +1,18 @@
 // protocols/mcb_keyboard/mcb_keyboard_protocol.cpp
 #include "mcb_keyboard_protocol.h"
 
-#include "../../libraries/command/i_command.h"
-#include "../../libraries/protocols/i_protocol.h"
 #include "../../utils/enum_/mcb_port_addresses.h"
-#include "../../utils/logger/logger.h"            // Logger::instance()
-#include "../../utils/enum_/enum_commandcontext.h"// CommandContext
-#include "../../utils/enum_/enum_errorcode.h"// ErrorCode
+#include "../../utils/logger/logger.h"   
+#include "../../utils/enum_/enum_commandcontext.h"
+#include "../../utils/enum_/enum_errorcode.h"
+ 
 
-#include <algorithm>   // std::find
-#include <numeric>     // std::accumulate
+#include <algorithm>
+#include <numeric>
 #include <optional>
 #include <vector>
 #include <cstdint>
-#include <cstdio>      // std::snprintf
+#include <cstdio>
 #include <fmt/core.h>
 
 namespace protocols::mcb_keyboard {
@@ -21,118 +20,147 @@ namespace protocols::mcb_keyboard {
 using utils::Logger;
 using utils::enum_::CommandContext;
 using utils::enum_::ErrorCode;
-
+using utils::enum_::MCBCommand;
+using utils::enum_::STX;
+using utils::enum_::ETX;
+using utils::enum_::MCB_MIN_FRAME_SIZE;
 struct MCBProtocol::Impl {
     Impl() = default;
     ~Impl() = default;
 
     //======================================================================
-    // Montagem de frame: STX | length | cmd | payload... | checksum | ETX
+    // Montagem de frame MCB
     //======================================================================
-    std::vector<uint8_t> buildFrame(utils::enum_::MCBCommand cmd,
-                                    const std::vector<uint8_t>& payload) const
-    {
-        Logger::instance().debug(CommandContext::HARDWARE,
-            "Montando frame para comando 0x" + toHex(static_cast<uint8_t>(cmd)));
+    std::vector<uint8_t> buildFrame(
+        MCBCommand cmd,
+        const std::vector<uint8_t>& payload
+    ) const {
+        Logger::instance().debug(
+            CommandContext::HARDWARE,
+            "MCBProtocol: montando frame cmd=0x" +
+            toHex(static_cast<uint8_t>(cmd))
+        );
 
         std::vector<uint8_t> frame;
         frame.reserve(5 + payload.size());
 
-        frame.push_back(utils::enum_::STX);
+        // STX
+        frame.push_back(STX);
 
+        // length = 1 (cmd) + payload.size()
         uint8_t length = static_cast<uint8_t>(1 + payload.size());
         frame.push_back(length);
 
+        // comando
         frame.push_back(static_cast<uint8_t>(cmd));
 
+        // payload
         frame.insert(frame.end(), payload.begin(), payload.end());
 
+        // checksum
         uint8_t chksum = calculateChecksum(cmd, payload);
         frame.push_back(chksum);
 
-        frame.push_back(utils::enum_::ETX);
+        // ETX
+        frame.push_back(ETX);
 
-        Logger::instance().debug(CommandContext::HARDWARE,
-            "Frame montado com " + std::to_string(frame.size()) + " bytes.");
+        Logger::instance().debug(
+            CommandContext::HARDWARE,
+            "MCBProtocol: frame montado, tamanho=" +
+            std::to_string(frame.size())
+        );
         return frame;
     }
 
     //======================================================================
-    // Desmontagem de frame, valida STX/ETX/length/checksum e retorna MCBFrame
+    // Parse de frame MCB
     //======================================================================
-    std::optional<MCBFrame> parseFrame(const std::vector<uint8_t>& buffer) const {
-        if (buffer.size() < utils::enum_::MCB_MIN_FRAME_SIZE) {
-            Logger::instance().warning(CommandContext::HARDWARE,
-                                       ErrorCode::ProtocolError,
-                                       "Buffer muito curto para ser um frame MCB.");
+    std::optional<MCBFrame> parseFrame(
+        const std::vector<uint8_t>& buffer
+    ) const {
+        if (buffer.size() < MCB_MIN_FRAME_SIZE) {
+            Logger::instance().warning(
+                CommandContext::HARDWARE, ErrorCode::ProtocolError,
+                "MCBProtocol: buffer muito curto"
+            );
             return std::nullopt;
         }
-        if (buffer.front() != utils::enum_::STX) {
-            Logger::instance().warning(CommandContext::HARDWARE,
-                                       ErrorCode::ProtocolError,
-                                       "STX inválido: 0x" + toHex(buffer.front()));
+        if (buffer.front() != STX) {
+            Logger::instance().warning(
+                CommandContext::HARDWARE, ErrorCode::ProtocolError,
+                "MCBProtocol: STX inválido 0x" + toHex(buffer.front())
+            );
             return std::nullopt;
         }
-        if (buffer.back() != utils::enum_::ETX) {
-            Logger::instance().warning(CommandContext::HARDWARE,
-                                       ErrorCode::ProtocolError,
-                                       "ETX inválido: 0x" + toHex(buffer.back()));
+        if (buffer.back() != ETX) {
+            Logger::instance().warning(
+                CommandContext::HARDWARE, ErrorCode::ProtocolError,
+                "MCBProtocol: ETX inválido 0x" + toHex(buffer.back())
+            );
             return std::nullopt;
         }
 
         uint8_t length = buffer[1];
         size_t expected = static_cast<size_t>(length) + 4;
         if (buffer.size() != expected) {
-            Logger::instance().warning(CommandContext::HARDWARE,
-                                       ErrorCode::ProtocolError,
-                                       "Tamanho inconsistente. Esperado="
-                                       + std::to_string(expected)
-                                       + ", real=" + std::to_string(buffer.size()));
+            Logger::instance().warning(
+                CommandContext::HARDWARE, ErrorCode::ProtocolError,
+                "MCBProtocol: tamanho inconsistente, esperado=" +
+                std::to_string(expected) +
+                " real=" + std::to_string(buffer.size())
+            );
             return std::nullopt;
         }
 
         uint8_t cmdByte = buffer[2];
         auto cmd = toMCBCommand(cmdByte);
 
+        // extrai payload
         size_t dataSize = length - 1;
         std::vector<uint8_t> data;
-        if (dataSize > 0) {
-            data.insert(data.end(),
-                        buffer.begin() + 3,
-                        buffer.begin() + 3 + dataSize);
+        if (dataSize) {
+            data.insert(
+                data.end(),
+                buffer.begin() + 3,
+                buffer.begin() + 3 + dataSize
+            );
         }
 
-        uint8_t receivedChksum = buffer[3 + dataSize];
-        uint8_t computed = calculateChecksum(cmd, data);
-        if (receivedChksum != computed) {
-            Logger::instance().warning(CommandContext::HARDWARE,
-                                       ErrorCode::ProtocolError,
-                                       "Checksum inválido. Calc=0x" + toHex(computed)
-                                       + ", recebido=0x" + toHex(receivedChksum));
+        // verifica checksum
+        uint8_t recvChk = buffer[3 + dataSize];
+        uint8_t calcChk = calculateChecksum(cmd, data);
+        if (recvChk != calcChk) {
+            Logger::instance().warning(
+                CommandContext::HARDWARE, ErrorCode::ProtocolError,
+                "MCBProtocol: checksum inválido calc=0x" +
+                toHex(calcChk) + " recv=0x" + toHex(recvChk)
+            );
             return std::nullopt;
         }
 
+        // monta MCBFrame
         MCBFrame frame;
         frame.command = cmd;
-        frame.data = std::move(data);
+        frame.data    = std::move(data);
 
-        Logger::instance().debug(CommandContext::HARDWARE,
-            "Frame parseado com sucesso. Comando=0x" + toHex(cmdByte)
-            + ", dataSize=" + std::to_string(frame.data.size()));
+        Logger::instance().debug(
+            CommandContext::HARDWARE,
+            "MCBProtocol: frame parseado cmd=0x" +
+            toHex(cmdByte) + " dataSize=" +
+            std::to_string(frame.data.size())
+        );
         return frame;
     }
 
 private:
-    // converte byte em hex string “XX”
     static std::string toHex(uint8_t b) {
         char buf[4];
         std::snprintf(buf, sizeof(buf), "%02X", b);
         return buf;
     }
 
-    // mapeia todo o range de comandos do manual :contentReference[oaicite:0]{index=0}
-    static utils::enum_::MCBCommand toMCBCommand(uint8_t b) {
-        using C = utils::enum_::MCBCommand;
+    static MCBCommand toMCBCommand(uint8_t b) {
+        using C = MCBCommand;
         switch (b) {
             case 0x51: return C::READ_FIRMWARE;
             case 0x52: return C::READ_STATUS;
@@ -165,17 +193,17 @@ private:
         }
     }
 
-    // soma cmd + payload, modulo 256
-    static uint8_t calculateChecksum(utils::enum_::MCBCommand cmd,
-                                     const std::vector<uint8_t>& payload)
-    {
+    static uint8_t calculateChecksum(
+        MCBCommand cmd,
+        const std::vector<uint8_t>& payload
+    ) {
         uint32_t sum = static_cast<uint8_t>(cmd);
         for (auto b : payload) sum += b;
         return static_cast<uint8_t>(sum & 0xFF);
     }
 };
 
-// ——— MCBProtocol público ——— 
+// ——— PImpl público ——— 
 
 MCBProtocol::MCBProtocol()
   : pImpl_(std::make_unique<Impl>())
@@ -183,13 +211,16 @@ MCBProtocol::MCBProtocol()
 
 MCBProtocol::~MCBProtocol() = default;
 
-std::vector<uint8_t> MCBProtocol::buildFrame(utils::enum_::MCBCommand cmd,
-                                             const std::vector<uint8_t>& payload) const
-{
+std::vector<uint8_t> MCBProtocol::buildFrame(
+    MCBCommand cmd,
+    const std::vector<uint8_t>& payload
+) const {
     return pImpl_->buildFrame(cmd, payload);
 }
 
-std::optional<MCBFrame> MCBProtocol::parseFrame(const std::vector<uint8_t>& buffer) const {
+std::optional<MCBFrame> MCBProtocol::parseFrame(
+    const std::vector<uint8_t>& buffer
+) const {
     return pImpl_->parseFrame(buffer);
 }
 

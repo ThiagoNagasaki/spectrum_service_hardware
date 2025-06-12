@@ -2,10 +2,10 @@
 #ifndef READ_STATUS_COMMAND_H
 #define READ_STATUS_COMMAND_H
 
-#include "../../libraries/command/i_command.h"
-#include "../../libraries/protocols/i_protocol.h"
-#include "../../utils/enum_/mcb_port_addresses.h"
-#include "../../utils/logger/logger.h"
+#include "../../../libraries/command/i_command.h"
+#include "../../../libraries/protocols/i_protocol.h"
+#include "../../../utils/enum_/mcb_port_addresses.h"
+#include "../../../utils/logger/logger.h"
 #include <memory>
 
 namespace command::mcb {

@@ -3,6 +3,8 @@
 
 #include "../enum_/enum_transportstatus.h"         // TransportStatus
 #include "../interface/i_transport.h"              // ITransport
+#include "../../../libraries/protocols/mcb_keyboard/mcb_keyboard_protocol.h"
+#include "../../../libraries/protocols/i_protocol.h"
 #include <memory>
 #include <string>
 #include <vector>
@@ -10,7 +12,8 @@
 #include <cstdint>
 
 namespace transport::network {
-
+using protocols::mcb_keyboard::MCBProtocol;
+using protocols::mcb_keyboard::MCBFrame;
 /**
  * \struct TCPConfig
  * \brief Estrutura para configurar parâmetros de conexão TCP.
@@ -31,7 +34,7 @@ struct TCPConfig {
  * - \c subscribe() registra callback para dados recebidos.
  * - \c get_status() retorna o estado atual (Disconnected, Connecting, Connected, Error).
  */
-class TCPTransport : public interface::ITransport {
+class TCPTransport : public interface::ITransport,public protocol::IProtocol{
 public:
     /**
      * \brief Construtor que recebe configurações TCP (IP e porta).
@@ -48,6 +51,12 @@ public:
     bool send(const std::vector<uint8_t>& data) override;
     void subscribe(std::function<void(const std::vector<uint8_t>&)> callback) override;
     enum_::TransportStatus get_status() const override;
+    // IProtocol:
+    std::vector<uint8_t> sendCommand(
+       uint8_t cmd,
+       const std::vector<uint8_t>& payload ) override;
+    /// bloqueia até ler um frame completo (termina em ETX)
+    std::vector<uint8_t> receive();
 
 private:
     /**

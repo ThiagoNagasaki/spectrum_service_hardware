@@ -35,6 +35,7 @@ static constexpr std::size_t MCB_MAX_DATA_SIZE = 230;
  *
  */
 enum class MCBCommand : uint8_t {
+    
     // Leituras
     READ_FIRMWARE        = 0x51,
     READ_STATUS          = 0x52,

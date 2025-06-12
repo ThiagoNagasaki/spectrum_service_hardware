@@ -23,7 +23,7 @@ struct WriteDigitalTimerCommand::Impl {
     void run() {
         uint8_t high = static_cast<uint8_t>((timeout >> 8) & 0xFF);
         uint8_t low  = static_cast<uint8_t>(timeout & 0xFF);
-        // monta explicitamente o payload convertendo enum e inteiros em bytes
+    
         std::vector<uint8_t> payload = {
             static_cast<uint8_t>(port),
             high,
@@ -37,7 +37,7 @@ struct WriteDigitalTimerCommand::Impl {
 
     std::shared_ptr<protocol::IProtocol> protocol;
     utils::enum_::DigitalOutputPort      port;
-    uint16_t                              timeout;
+    uint16_t                             timeout;
     std::shared_ptr<spdlog::logger>      logger;
 };
 

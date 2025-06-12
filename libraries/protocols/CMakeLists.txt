@@ -1,5 +1,6 @@
 add_library(protocols_core
     mcb_keyboard/mcb_keyboard_protocol.cpp 
+
 )
 
 target_include_directories(protocols_core PUBLIC

@@ -1,75 +1,56 @@
-#ifndef MCB_KEYBOARD_PROTOCOL_H
-#define MCB_KEYBOARD_PROTOCOL_H
-
-#include "../../libraries/command/i_command.h"
-#include "../../libraries/protocols/i_protocol.h"
-#include "../../utils/enum_/mcb_port_addresses.h"
-#include "../../utils/logger/logger.h"// STX, ETX, MCBCommand, MCB_MIN_FRAME_SIZE
+// protocols/mcb_keyboard/mcb_keyboard_protocol.h
+#ifndef PROTOCOLS_MCB_KEYBOARD_MCB_KEYBOARD_PROTOCOL_H
+#define PROTOCOLS_MCB_KEYBOARD_MCB_KEYBOARD_PROTOCOL_H
+#include "../../../utils/enum_/mcb_port_addresses.h"
+#include "../../../utils/logger/logger.h"  
 #include <vector>
 #include <optional>
+#include <cstdint>
 #include <memory>
 
-namespace protocols::mcb_keyboard {
+           
 
+namespace protocols::mcb_keyboard {
+using utils::Logger;
+using utils::enum_::CommandContext;
+using utils::enum_::ErrorCode;
+using utils::enum_::MCBCommand;
+using utils::enum_::STX;
+using utils::enum_::ETX;
+using utils::enum_::MCB_MIN_FRAME_SIZE;
 /**
- * \brief Estrutura que representa um frame MCB decodificado.
+ * \brief Frame MCB decodificado (após parseFrame).
  */
 struct MCBFrame {
-    utils::enum_::MCBCommand command; ///< Comando (ex.: 0x51, 0x52 etc.)
-    std::vector<uint8_t> data;       ///< Dados do frame (payload)
+    MCBCommand command;  ///< comando
+    std::vector<uint8_t>    data;     ///< payload (bytes de dados)
 };
 
 /**
  * \class MCBProtocol
- * \brief Classe para manipular frames do protocolo MCB, usando PImpl e Singleton logger.
- *
- * Métodos principais:
- *  - buildFrame(): Gera o frame [STX, length, command, data..., checksum, ETX].
- *  - parseFrame(): Valida buffer, checa STX, ETX, tamanho e checksum.
- *  - Faz logs via \c Logger::instance().
+ * \brief Monta e desmonta frames MCB com PImpl e logs em spdlog.
  */
 class MCBProtocol {
 public:
-    /**
-     * \brief Construtor padrão.
-     *        Logger Singleton será acessado internamente.
-     */
     MCBProtocol();
-
-    /**
-     * \brief Destrutor.
-     */
     ~MCBProtocol();
 
-    /**
-     * \brief Monta um frame MCB a partir de um comando e de um payload.
-     * \param cmd Comando MCB (ex.: MCBCommand::READ_FIRMWARE).
-     * \param payload Bytes de dados do comando.
-     * \return Vetor de bytes representando o frame completo.
-     */
-    std::vector<uint8_t> buildFrame(utils::enum_::MCBCommand cmd, 
-                                    const std::vector<uint8_t>& payload) const;
+    /// Gera frame completo: STX | length | cmd | data.. | checksum | ETX
+    std::vector<uint8_t> buildFrame(
+        MCBCommand cmd,
+        const std::vector<uint8_t>& payload
+    ) const;
 
-    /**
-     * \brief Tenta analisar um buffer como um frame MCB.
-     * \param buffer Buffer de bytes a analisar.
-     * \return std::optional<MCBFrame> contendo o frame decodificado,
-     *         ou std::nullopt se falhar (ex.: checksum inválido).
-     */
-    std::optional<MCBFrame> parseFrame(const std::vector<uint8_t>& buffer) const;
+    /// Tenta parsear um buffer como frame MCB e retorna MCBFrame.
+    std::optional<MCBFrame> parseFrame(
+        const std::vector<uint8_t>& buffer
+    ) const;
 
 private:
-    /**
-     * \brief Classe interna (PImpl) com toda a lógica do protocolo.
-     */
     class Impl;
-
-    /**
-     * \brief Ponteiro único para a implementação oculta.
-     */
     std::unique_ptr<Impl> pImpl_;
 };
 
-} // namespace mcb::protocols
+} // namespace protocols::mcb_keyboard
 
-#endif // MCB_PROTOCOL_H
+#endif // PROTOCOLS_MCB_KEYBOARD_MCB_KEYBOARD_PROTOCOL_H
