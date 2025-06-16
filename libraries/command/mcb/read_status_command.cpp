@@ -16,13 +16,11 @@ struct ReadStatusCommand::Impl {
     {}
 
     StatusInfo run() {
-        // envia comando 0x52 sem payload
         auto data = protocol->sendCommand(
             static_cast<uint8_t>(utils::enum_::MCBCommand::READ_STATUS),
             {}
         );
 
-        // valida resposta de 2 bytes
         if (data.size() < 2) {
             throw std::runtime_error(
                 "READ_STATUS: payload inesperado, esperado >=2 bytes"
@@ -31,7 +29,6 @@ struct ReadStatusCommand::Impl {
         uint8_t b0 = data[0];
         uint8_t b1 = data[1];
 
-        // preenche struct 
         return StatusInfo{
             /*interlockEmergency0=*/ static_cast<bool>(b0 & 0x01),
             /*interlockEmergency1=*/ static_cast<bool>(b0 & 0x02),

@@ -19,7 +19,6 @@ struct WriteMacPcCommand::Impl {
     {}
 
     void run() {
-        // envia 6 bytes de MAC conforme manual :contentReference[oaicite:3]{index=3}
         protocol->sendCommand(
             static_cast<uint8_t>(utils::enum_::MCBCommand::WRITE_MAC_PC),
             { info.mac[0], info.mac[1], info.mac[2],

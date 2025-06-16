@@ -30,7 +30,6 @@ public:
     explicit ReadInfo3Command(std::shared_ptr<protocol::IProtocol> protocol);
     ~ReadInfo3Command() override;
 
-    /// Executa o comando e retorna 15 bytes de identificação.
     Info3Info execute() override;
 
 private:

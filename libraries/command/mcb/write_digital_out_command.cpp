@@ -27,7 +27,6 @@ struct WriteDigitalOutCommand::Impl {
     }
 
     void run() {
-        // Monta payload convertendo enum em byte
         std::vector<uint8_t> payload{
             static_cast<uint8_t>(port),
             value
@@ -56,7 +55,6 @@ WriteDigitalOutCommand::~WriteDigitalOutCommand() = default;
 void WriteDigitalOutCommand::execute() {
     try {
         impl_->run();
-        // Converte enum para byte ao logar
         impl_->logger->info(
             "WRITE_DIGITAL_OUT executado: address=0x{:02X}, value={}",
             static_cast<uint8_t>(impl_->port),

@@ -17,7 +17,6 @@ struct ReadSensorDistanceCommand::Impl {
     {}
 
     SensorDistanceInfo run() {
-        // envia [0x55, mode]
         auto data = protocol->sendCommand(
             static_cast<uint8_t>(utils::enum_::MCBCommand::READ_SENSOR_DISTANCE),
             { static_cast<uint8_t>(mode) }

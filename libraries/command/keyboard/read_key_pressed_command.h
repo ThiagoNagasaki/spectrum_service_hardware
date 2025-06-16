@@ -14,8 +14,8 @@ namespace command::keyboard {
 using command::ICommand; 
 using utils::enum_::KeyCode;
 struct KeyPressedInfo {
-    KeyCode code;  ///< código da tecla (bits 0..6)
-    bool    shift; ///< true se Shift estava pressionado (bit 7)
+    KeyCode code; 
+    bool    shift;
      std::string toString() const {
         using namespace command::keyboard;
         using utils::ResponseTranslator;

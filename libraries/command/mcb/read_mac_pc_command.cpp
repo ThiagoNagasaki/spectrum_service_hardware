@@ -16,13 +16,11 @@ struct ReadMacPcCommand::Impl {
     {}
 
     MacPcInfo run() {
-        // envia comando 0x5C sem payload
         auto data = protocol->sendCommand(
             static_cast<uint8_t>(utils::enum_::MCBCommand::READ_MAC_PC),
             {}
         );
 
-        // valida resposta de 6 bytes
         if (data.size() < 6) {
             throw std::runtime_error(
                 "READ_MAC_PC: payload inesperado, esperado >=6 bytes"

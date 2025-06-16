@@ -16,13 +16,11 @@ struct ReadDataHoraCommand::Impl {
     {}
 
     DataHoraInfo run() {
-        // envia comando 0x5B sem payload
         auto data = protocol->sendCommand(
             static_cast<uint8_t>(utils::enum_::MCBCommand::READ_DATA_HORA),
             {}
         );
 
-        // valida resposta de 9 bytes
         if (data.size() < 9) {
             throw std::runtime_error(
                 "READ_DATA_HORA: payload inesperado, esperado >=9 bytes"

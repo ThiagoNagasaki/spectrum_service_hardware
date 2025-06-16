@@ -18,7 +18,6 @@ struct WriteSpecialCommand::Impl {
     {}
 
     void run() {
-        // envia [0x61, address, value]
         protocol->sendCommand(
             static_cast<uint8_t>(utils::enum_::MCBCommand::WRITE_SPECIAL),
             { address, value }

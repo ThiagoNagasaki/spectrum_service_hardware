@@ -28,10 +28,11 @@ struct MCBProtocol::Impl {
     Impl() = default;
     ~Impl() = default;
 
-    //======================================================================
-    // Montagem de frame MCB
-    //======================================================================
-    std::vector<uint8_t> buildFrame(
+    /**
+    * \class BuildFrameMCB
+    z*\brief Montagem de frame MCB
+    **/
+        std::vector<uint8_t> buildFrame(
         MCBCommand cmd,
         const std::vector<uint8_t>& payload
     ) const {
@@ -44,24 +45,18 @@ struct MCBProtocol::Impl {
         std::vector<uint8_t> frame;
         frame.reserve(5 + payload.size());
 
-        // STX
         frame.push_back(STX);
 
-        // length = 1 (cmd) + payload.size()
         uint8_t length = static_cast<uint8_t>(1 + payload.size());
         frame.push_back(length);
 
-        // comando
         frame.push_back(static_cast<uint8_t>(cmd));
 
-        // payload
         frame.insert(frame.end(), payload.begin(), payload.end());
 
-        // checksum
         uint8_t chksum = calculateChecksum(cmd, payload);
         frame.push_back(chksum);
 
-        // ETX
         frame.push_back(ETX);
 
         Logger::instance().debug(
@@ -71,10 +66,10 @@ struct MCBProtocol::Impl {
         );
         return frame;
     }
-
-    //======================================================================
-    // Parse de frame MCB
-    //======================================================================
+    /**
+    * \class ParseFrameMCB
+    z*\brief Parse de frame MCB
+    **/
     std::optional<MCBFrame> parseFrame(
         const std::vector<uint8_t>& buffer
     ) const {
@@ -115,7 +110,6 @@ struct MCBProtocol::Impl {
         uint8_t cmdByte = buffer[2];
         auto cmd = toMCBCommand(cmdByte);
 
-        // extrai payload
         size_t dataSize = length - 1;
         std::vector<uint8_t> data;
         if (dataSize) {
@@ -126,7 +120,6 @@ struct MCBProtocol::Impl {
             );
         }
 
-        // verifica checksum
         uint8_t recvChk = buffer[3 + dataSize];
         uint8_t calcChk = calculateChecksum(cmd, data);
         if (recvChk != calcChk) {
@@ -138,7 +131,6 @@ struct MCBProtocol::Impl {
             return std::nullopt;
         }
 
-        // monta MCBFrame
         MCBFrame frame;
         frame.command = cmd;
         frame.data    = std::move(data);
@@ -202,8 +194,6 @@ private:
         return static_cast<uint8_t>(sum & 0xFF);
     }
 };
-
-// ——— PImpl público ——— 
 
 MCBProtocol::MCBProtocol()
   : pImpl_(std::make_unique<Impl>())

@@ -30,7 +30,6 @@ public:
     explicit ReadChaveLigaCommand(std::shared_ptr<protocol::IProtocol> protocol);
     ~ReadChaveLigaCommand() override;
 
-    /// Executa o comando e retorna o estado da chave liga/desliga.
     ChaveLigaInfo execute() override;
 
 private:

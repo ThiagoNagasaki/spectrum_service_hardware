@@ -15,9 +15,8 @@
 namespace command::keyboard {
 using utils::enum_::KeyCode;
 struct KeyReleasedInfo {
-    KeyCode code;  ///< código da tecla liberada (bits 0..6)
+    KeyCode code; 
 
-    /// Retorna o nome “humano” da tecla liberada, ex.: "S1", "ESC", etc.
     std::string toString() const {
         return utils::ResponseTranslator::keyCodeToString(code);
     }

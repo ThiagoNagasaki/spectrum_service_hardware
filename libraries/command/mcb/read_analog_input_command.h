@@ -19,7 +19,6 @@ namespace command::mcb {
 struct AnalogInputInfo {
     uint16_t value;
 
-    /// Retorna representação “humana” do valor analógico, ex: "1023"
     std::string toString() const {
         return std::to_string(value);
     }
@@ -38,7 +37,6 @@ public:
                            utils::enum_::AnalogInputPort analogAddress);
     ~ReadAnalogInputCommand() override;
 
-    /// Executa o comando para a porta configurada e retorna seu valor.
     AnalogInputInfo execute() override;
 
 private:

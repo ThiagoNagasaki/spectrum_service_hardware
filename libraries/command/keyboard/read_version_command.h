@@ -21,10 +21,8 @@ namespace command::keyboard {
  * Byte 1: revisão :contentReference[oaicite:1]{index=1}
  */
 struct VersionInfo {
-    uint8_t version;  ///< versão principal
-    uint8_t revision; ///< número de revisão
-
-    /// Retorna algo como "v1 rev3"
+    uint8_t version; 
+    uint8_t revision; 
     std::string toString() const {
         return "v" + std::to_string(version)
              + " rev" + std::to_string(revision);

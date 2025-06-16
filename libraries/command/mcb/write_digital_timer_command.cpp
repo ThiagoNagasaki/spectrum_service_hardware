@@ -53,7 +53,6 @@ WriteDigitalTimerCommand::~WriteDigitalTimerCommand() = default;
 void WriteDigitalTimerCommand::execute() {
     try {
         impl_->run();
-        // converte enum para byte ao logar
         impl_->logger->info(
             "WRITE_DIGITAL_TIMER executado: address=0x{:02X}, timeout={}s",
             static_cast<uint8_t>(impl_->port),

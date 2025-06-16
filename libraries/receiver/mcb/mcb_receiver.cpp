@@ -1,14 +1,16 @@
 // libraries/receiver/mcb/mcb_receiver.cpp
 #include "mcb_receiver.h"
 #include <spdlog/spdlog.h>
-#include "../../libraries/command/mcb/read_status_command.h"
-#include "../../libraries/command/mcb/read_analog_input_command.h"
-#include "../../libraries/command/mcb/read_data_hora_command.h"
-#include "../../utils/enum_/mcb_port_addresses.h"
+#include <command/mcb/read_status_command.h>
+#include <command/mcb/read_analog_input_command.h>
+#include <command/mcb/read_data_hora_command.h>
+#include <utils/enum_/mcb_port_addresses.h>
 
-namespace command::mcb::receiver {
+namespace receiver::mcb {
 using utils::enum_::MCBCommand;
 using utils::enum_::AnalogInputPort;
+
+
 McbReceiver::McbReceiver(std::shared_ptr<protocol::IProtocol> proto)
   : protocol_(std::move(proto))
 {

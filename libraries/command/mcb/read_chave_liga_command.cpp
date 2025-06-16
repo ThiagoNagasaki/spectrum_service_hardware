@@ -16,13 +16,11 @@ struct ReadChaveLigaCommand::Impl {
     {}
 
     ChaveLigaInfo run() {
-        // envia comando 0x5A sem payload
         auto data = protocol->sendCommand(
             static_cast<uint8_t>(utils::enum_::MCBCommand::READ_CHAVE_LIGA),
             {}
         );
 
-        // valida resposta de 1 byte
         if (data.size() < 1) {
             throw std::runtime_error(
                 "READ_CHAVE_LIGA: payload inesperado, esperado >=1 byte"

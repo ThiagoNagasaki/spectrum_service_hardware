@@ -27,7 +27,6 @@ struct ReadAnalogInputCommand::Impl {
                 "READ_ANALOG_INPUT: payload inesperado, esperado >=2 bytes"
             );
         }
-        // MSB primeiro
         uint16_t val = (static_cast<uint16_t>(data[0]) << 8)
                      | static_cast<uint16_t>(data[1]);
         return AnalogInputInfo{ val };
@@ -49,7 +48,6 @@ ReadAnalogInputCommand::~ReadAnalogInputCommand() = default;
 AnalogInputInfo ReadAnalogInputCommand::execute() {
     try {
         auto info = impl_->run();
-        // agora usa toString() para logar
         impl_->logger->info(
             "READ_ANALOG_INPUT executado: {}", info.toString()
         );

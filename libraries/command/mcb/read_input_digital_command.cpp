@@ -16,7 +16,6 @@ struct ReadInputDigitalCommand::Impl {
         logger(spdlog::default_logger()) {}
 
   DigitalInputInfo run() {
-    // envia [0x53, address]
     std::vector<uint8_t> payload{static_cast<uint8_t>(address)};
     auto data = protocol->sendCommand(
         static_cast<uint8_t>(utils::enum_::MCBCommand::READ_INPUT_DIGITAL),
@@ -26,7 +25,6 @@ struct ReadInputDigitalCommand::Impl {
       throw std::runtime_error(
           "READ_INPUT_DIGITAL: payload vazio (esperado 1 byte)");
     }
-    // 0→Off, !=0→On
     return DigitalInputInfo{data[0] != 0};
   }
 

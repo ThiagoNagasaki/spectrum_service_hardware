@@ -27,8 +27,8 @@ struct ReadVersionCommand::Impl {
             throw std::runtime_error("CMD_VERSION: payload inesperado, esperado >=2 bytes");
         }
         return VersionInfo{
-            /*version=*/  data[0],
-            /*revision=*/ data[1]
+        data[0],
+        data[1]
         };
     }
 

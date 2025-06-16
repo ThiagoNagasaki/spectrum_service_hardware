@@ -18,7 +18,6 @@ struct WriteInfo1Command::Impl {
       , data(d)
       , logger(spdlog::default_logger())
     {
-        // rejeita payload todo zero
         if (std::all_of(data.begin(), data.end(), [](auto b){ return b == 0; })) {
             throw std::invalid_argument("WRITE_INFO1: dado inválido, não pode ser todos zeros");
         }

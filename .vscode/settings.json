@@ -67,6 +67,7 @@
         "charconv": "cpp",
         "chrono": "cpp",
         "iomanip": "cpp",
-        "cinttypes": "cpp"
+        "cinttypes": "cpp",
+        "fstream": "cpp"
     }
 }

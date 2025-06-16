@@ -21,7 +21,6 @@ struct ReadInfo1Command::Impl {
             {}
         );
 
-        // valida retorno de 15 bytes
         if (data.size() < 15) {
             throw std::runtime_error(
                 "READ_INFO1: payload inesperado, esperado >=15 bytes"

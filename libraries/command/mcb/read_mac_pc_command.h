@@ -30,7 +30,6 @@ public:
     explicit ReadMacPcCommand(std::shared_ptr<protocol::IProtocol> protocol);
     ~ReadMacPcCommand() override;
 
-    /// Executa o comando e retorna o endereço MAC do PC.
     MacPcInfo execute() override;
 
 private:

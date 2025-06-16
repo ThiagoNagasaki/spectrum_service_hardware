@@ -19,9 +19,8 @@ struct WriteDataHoraCommand::Impl {
     {}
 
     void run() {
-        // monta payload de 9 bytes conforme manual :contentReference[oaicite:1]{index=1}
         std::vector<uint8_t> payload(9);
-        payload[0] = 0;                                 // reservado
+        payload[0] = 0;                              
         payload[1] = data.second;
         payload[2] = data.minute;
         payload[3] = data.hour;

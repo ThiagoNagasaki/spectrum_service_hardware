@@ -68,7 +68,6 @@ public:
     explicit ReadStatusCommand(std::shared_ptr<protocol::IProtocol> protocol);
     ~ReadStatusCommand() override;
 
-    /// Executa o comando e retorna o estado das entradas.
     StatusInfo execute() override;
 
 private:

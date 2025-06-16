@@ -15,7 +15,6 @@ struct WriteNetworkConfigCommand::Impl {
     {}
 
     void run() {
-        // Monta payload de 16 bytes conforme manual :contentReference[oaicite:0]{index=0}
         std::vector<uint8_t> payload;
         payload.reserve(16);
         payload.insert(payload.end(), cfg.ip.begin(), cfg.ip.end());

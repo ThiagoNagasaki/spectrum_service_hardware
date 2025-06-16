@@ -31,7 +31,6 @@ public:
     explicit ReadFirmwareCommand(std::shared_ptr<protocol::IProtocol> proto);
     ~ReadFirmwareCommand() override;
 
-    /// Executa o comando e retorna os três bytes de firmware.
     FirmwareInfo execute() override;
 
 private:

@@ -36,7 +36,6 @@ public:
                             utils::enum_::DigitalInputPort inputAddress);
     ~ReadInputDigitalCommand() override;
 
-    /// Executa o comando para a porta configurada e retorna seu estado.
     DigitalInputInfo execute() override;
 
 private:

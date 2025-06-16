@@ -49,7 +49,6 @@ public:
     explicit ReadDataHoraCommand(std::shared_ptr<protocol::IProtocol> protocol);
     ~ReadDataHoraCommand() override;
 
-    /// Executa o comando e retorna um DataHoraInfo parseado.
     DataHoraInfo execute() override;
 
 private:

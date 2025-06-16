@@ -24,7 +24,6 @@ struct WriteConfigCommand::Impl {
     }
 
     void run() {
-        // payload: [address, values...]
         std::vector<uint8_t> payload;
         payload.reserve(1 + values.size());
         payload.push_back(static_cast<uint8_t>(address));
