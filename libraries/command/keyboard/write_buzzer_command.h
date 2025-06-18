@@ -23,7 +23,7 @@ namespace command::keyboard {
 class WriteBuzzerCommand : public ICommand<void> {
 public:
     /// @param durationMs duração em milissegundos (0–16000)
-    WriteBuzzerCommand(std::shared_ptr<protocol::IProtocol> protocol,
+    WriteBuzzerCommand(std::shared_ptr<protocols::IProtocol> protocols,
                        uint16_t durationMs);
     ~WriteBuzzerCommand() override;
 

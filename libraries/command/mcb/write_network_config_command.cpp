@@ -10,8 +10,8 @@
 namespace command::mcb {
 
 struct WriteNetworkConfigCommand::Impl {
-    Impl(std::shared_ptr<protocol::IProtocol> p, NetworkConfig c)
-      : protocol(std::move(p)), cfg(std::move(c)), logger(spdlog::default_logger())
+    Impl(std::shared_ptr<protocols::IProtocol> p, NetworkConfig c)
+      : protocols(std::move(p)), cfg(std::move(c)), logger(spdlog::default_logger())
     {}
 
     void run() {
@@ -22,19 +22,19 @@ struct WriteNetworkConfigCommand::Impl {
         payload.insert(payload.end(), cfg.gateway.begin(), cfg.gateway.end());
         payload.insert(payload.end(), cfg.dns.begin(), cfg.dns.end());
 
-        protocol->sendCommand(
+        protocols->sendCommand(
             static_cast<uint8_t>(utils::enum_::MCBCommand::WRITE_NETWORK_CONFIG),
             payload
         );
     }
 
-    std::shared_ptr<protocol::IProtocol> protocol;
+    std::shared_ptr<protocols::IProtocol> protocols;
     NetworkConfig cfg;
     std::shared_ptr<spdlog::logger>      logger;
 };
 
 WriteNetworkConfigCommand::WriteNetworkConfigCommand(
-    std::shared_ptr<protocol::IProtocol> proto,
+    std::shared_ptr<protocols::IProtocol> proto,
     NetworkConfig cfg
 ) : impl_(std::make_unique<Impl>(proto, std::move(cfg)))
 {}

@@ -2,10 +2,10 @@
 #ifndef READ_DATA_HORA_COMMAND_H
 #define READ_DATA_HORA_COMMAND_H
 
-#include "../../libraries/command/i_command.h"
-#include "../../libraries/protocols/i_protocol.h"
-#include "../../utils/enum_/mcb_port_addresses.h"
-#include "../../utils/logger/logger.h"
+#include "../../../libraries/command/i_command.h"
+#include "../../../libraries/protocols/i_protocol.h"
+#include "../../../utils/enum_/mcb_port_addresses.h"
+#include "../../../utils/logger/logger.h"
 #include <memory>
 #include <cstdint>
 
@@ -46,7 +46,7 @@ class ReadDataHoraCommand
   : public ICommand<DataHoraInfo>
 {
 public:
-    explicit ReadDataHoraCommand(std::shared_ptr<protocol::IProtocol> protocol);
+    explicit ReadDataHoraCommand(std::shared_ptr<protocols::IProtocol> protocols);
     ~ReadDataHoraCommand() override;
 
     DataHoraInfo execute() override;

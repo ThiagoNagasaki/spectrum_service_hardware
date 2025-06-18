@@ -10,13 +10,13 @@
 namespace command::mcb {
 
 struct ReadInfo2Command::Impl {
-    explicit Impl(std::shared_ptr<protocol::IProtocol> p)
-        : protocol(std::move(p))
+    explicit Impl(std::shared_ptr<protocols::IProtocol> p)
+        : protocols(std::move(p))
         , logger(spdlog::default_logger())
     {}
 
     Info2Info run() {
-        auto data = protocol->sendCommand(
+        auto data = protocols->sendCommand(
             static_cast<uint8_t>(utils::enum_::MCBCommand::READ_INFO2),
             {}
         );
@@ -32,12 +32,12 @@ struct ReadInfo2Command::Impl {
         return info;
     }
 
-    std::shared_ptr<protocol::IProtocol> protocol;
+    std::shared_ptr<protocols::IProtocol> protocols;
     std::shared_ptr<spdlog::logger>      logger;
 };
 
 ReadInfo2Command::ReadInfo2Command(
-    std::shared_ptr<protocol::IProtocol> proto
+    std::shared_ptr<protocols::IProtocol> proto
 ) : impl_(std::make_unique<Impl>(proto))
 {}
 

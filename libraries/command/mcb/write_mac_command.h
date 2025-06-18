@@ -23,7 +23,7 @@ struct MacAddr {
 
 class WriteMacCommand : public ICommand<void> {
 public:
-    WriteMacCommand(std::shared_ptr<protocol::IProtocol> protocol,
+    WriteMacCommand(std::shared_ptr<protocols::IProtocol> protocols,
                     MacAddr mac);
     ~WriteMacCommand() override;
 

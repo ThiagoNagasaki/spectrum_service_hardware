@@ -10,14 +10,14 @@
 namespace command::mcb {
 
 struct ReadAnalogInputCommand::Impl {
-    Impl(std::shared_ptr<protocol::IProtocol> p, utils::enum_::AnalogInputPort addr)
-      : protocol(std::move(p))
+    Impl(std::shared_ptr<protocols::IProtocol> p, utils::enum_::AnalogInputPort addr)
+      : protocols(std::move(p))
       , address(addr)
       , logger(spdlog::default_logger())
     {}
 
     AnalogInputInfo run() {
-        auto data = protocol->sendCommand(
+        auto data = protocols->sendCommand(
             static_cast<uint8_t>(utils::enum_::MCBCommand::READ_ANALOG_INPUT),
             { static_cast<uint8_t>(address) }
         );
@@ -32,13 +32,13 @@ struct ReadAnalogInputCommand::Impl {
         return AnalogInputInfo{ val };
     }
 
-    std::shared_ptr<protocol::IProtocol> protocol;
+    std::shared_ptr<protocols::IProtocol> protocols;
     utils::enum_::AnalogInputPort    address;
     std::shared_ptr<spdlog::logger>     logger;
 };
 
 ReadAnalogInputCommand::ReadAnalogInputCommand(
-    std::shared_ptr<protocol::IProtocol> proto,
+    std::shared_ptr<protocols::IProtocol> proto,
     utils::enum_::AnalogInputPort analogAddress
 ) : impl_(std::make_unique<Impl>(proto, analogAddress))
 {}

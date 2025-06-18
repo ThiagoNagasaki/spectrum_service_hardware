@@ -1,21 +1,33 @@
-// libraries/receiver/i_receiver.h
-#ifndef I_RECEIVER_H
-#define I_RECEIVER_H
-
+#pragma once
 #include <memory>
 
+namespace receiver {
+
 /**
- * \brief Interface genérica para “receber” informações decodificadas.
+ * \brief Interface para recepção de dados decodificados via callback.
  * 
- * @tparam T Tipo de informação recebida (StatusInfo, KeyPressedInfo, etc).
+ * @tparam T Tipo da informação recebida (ex.: StatusInfo, KeyPressedInfo)
  */
 template<typename T>
 class IReceiver {
 public:
     virtual ~IReceiver() = default;
 
-    /// Chamado sempre que chega um novo T para processar.
+    /// Notificação reativa (push)
     virtual void onReceive(const T& info) = 0;
+
 };
 
-#endif // I_RECEIVER_H
+/**
+ * \brief Interface para aguardar resposta bloqueante (pull).
+ */
+template<typename T>
+class IFrameAwaiter {
+public:
+    virtual ~IFrameAwaiter() = default;
+
+    /// Aguarda um frame completo e decodificado
+    virtual T waitForFrame() = 0;
+};
+
+} // namespace receiver

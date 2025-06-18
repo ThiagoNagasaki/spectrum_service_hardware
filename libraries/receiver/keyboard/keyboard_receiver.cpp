@@ -3,10 +3,11 @@
 #include "../../utils/enum_/keyboard_keycodes.h"
 #include "../../utils/enum_/mcb_port_addresses.h"
 #include <spdlog/spdlog.h>
-
+#include "../../../libraries/receiver/i_receiver.h"
 namespace command::keyboard {
+using receiver::IReceiver;
 using utils::enum_::MCBCommand;
-KeyboardReceiver::KeyboardReceiver(std::shared_ptr<protocol::IProtocol> proto)
+KeyboardReceiver::KeyboardReceiver(std::shared_ptr<protocols::IProtocol> proto)
   : protocol_(std::move(proto))
 {
     protocol_->subscribe([this](const Frame& frame) {

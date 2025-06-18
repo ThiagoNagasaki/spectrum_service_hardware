@@ -8,8 +8,9 @@
 #include "../../libraries/protocols/i_protocol.h"
 #include <memory>
 #include <vector>
-
+#include "../../../libraries/receiver/i_receiver.h"
 namespace command::keyboard {
+using receiver::IReceiver;
 
 /**
  * \brief Listener de eventos vindos do teclado via RS-485.
@@ -20,7 +21,7 @@ class KeyboardReceiver {
 public:
     using Frame = std::vector<uint8_t>;
 
-    explicit KeyboardReceiver(std::shared_ptr<protocol::IProtocol> proto);
+    explicit KeyboardReceiver(std::shared_ptr<protocols::IProtocol> proto);
     ~KeyboardReceiver();
 
     void setPressedHandler(std::shared_ptr<IReceiver<KeyPressedInfo>>  handler);
@@ -29,7 +30,7 @@ public:
 private:
     void dispatch(const Frame& frame);
 
-    std::shared_ptr<protocol::IProtocol>        protocol_;
+    std::shared_ptr<protocols::IProtocol>        protocol_;
     std::shared_ptr<IReceiver<KeyPressedInfo>>  pressedHandler_;
     std::shared_ptr<IReceiver<KeyReleasedInfo>> releasedHandler_;
 };

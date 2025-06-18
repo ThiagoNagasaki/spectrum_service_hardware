@@ -31,7 +31,7 @@ struct NetworkConfig {
 
 class WriteNetworkConfigCommand : public ICommand<void> {
 public:
-    WriteNetworkConfigCommand(std::shared_ptr<protocol::IProtocol> protocol,
+    WriteNetworkConfigCommand(std::shared_ptr<protocols::IProtocol> protocols,
                               NetworkConfig cfg);
     ~WriteNetworkConfigCommand() override;
 

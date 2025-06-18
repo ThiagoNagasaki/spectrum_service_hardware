@@ -27,7 +27,7 @@ namespace command::mcb {
  */
 class WriteDataHoraCommand : public ICommand<void> {
 public:
-    explicit WriteDataHoraCommand(std::shared_ptr<protocol::IProtocol> protocol,
+    explicit WriteDataHoraCommand(std::shared_ptr<protocols::IProtocol> protocols,
                                   const DataHoraInfo& dataHora);
     ~WriteDataHoraCommand() override;
 

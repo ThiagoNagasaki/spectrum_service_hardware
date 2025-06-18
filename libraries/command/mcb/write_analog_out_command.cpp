@@ -11,10 +11,10 @@
 namespace command::mcb {
 using utils::enum_::MCBCommand;
 struct WriteAnalogOutCommand::Impl {
-    Impl(std::shared_ptr<protocol::IProtocol> p,
+    Impl(std::shared_ptr<protocols::IProtocol> p,
          utils::enum_::AnalogInputPort addr,
          uint8_t val)
-      : protocol(std::move(p))
+      : protocols(std::move(p))
       , address(addr)
       , dacValue(val)
       , logger(spdlog::default_logger())
@@ -26,20 +26,20 @@ struct WriteAnalogOutCommand::Impl {
             static_cast<uint8_t>(address),
             dacValue
         };
-        protocol->sendCommand(
+        protocols->sendCommand(
             static_cast<uint8_t>(MCBCommand::WRITE_ANALOG_OUT),
             payload
         );
     }
 
-    std::shared_ptr<protocol::IProtocol> protocol;
+    std::shared_ptr<protocols::IProtocol> protocols;
     utils::enum_::AnalogInputPort       address;
     uint8_t                              dacValue;
     std::shared_ptr<spdlog::logger>      logger;
 };
 
 WriteAnalogOutCommand::WriteAnalogOutCommand(
-    std::shared_ptr<protocol::IProtocol> proto,
+    std::shared_ptr<protocols::IProtocol> proto,
     utils::enum_::AnalogInputPort address,
     uint8_t dacValue
 ) : impl_(std::make_unique<Impl>(proto, address, dacValue))

@@ -65,7 +65,7 @@ class ReadStatusCommand
   : public ICommand<StatusInfo>
 {
 public:
-    explicit ReadStatusCommand(std::shared_ptr<protocol::IProtocol> protocol);
+    explicit ReadStatusCommand(std::shared_ptr<protocols::IProtocol> protocols);
     ~ReadStatusCommand() override;
 
     StatusInfo execute() override;

@@ -24,7 +24,7 @@ class ReadStatusSpecialCommand
   : public command::ICommand<StatusSpecialInfo>
 {
 public:
-    explicit ReadStatusSpecialCommand(std::shared_ptr<protocol::IProtocol> proto);
+    explicit ReadStatusSpecialCommand(std::shared_ptr<protocols::IProtocol> proto);
     ~ReadStatusSpecialCommand() override;
 
     StatusSpecialInfo execute() override;

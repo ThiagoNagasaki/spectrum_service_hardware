@@ -32,7 +32,7 @@ class ReadInputDigitalCommand
   : public ICommand<DigitalInputInfo>
 {
 public:
-    ReadInputDigitalCommand(std::shared_ptr<protocol::IProtocol> proto,
+    ReadInputDigitalCommand(std::shared_ptr<protocols::IProtocol> proto,
                             utils::enum_::DigitalInputPort inputAddress);
     ~ReadInputDigitalCommand() override;
 

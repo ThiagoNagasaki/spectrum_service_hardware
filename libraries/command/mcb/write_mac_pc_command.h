@@ -18,7 +18,7 @@ namespace command::mcb {
  */
 class WriteMacPcCommand : public ICommand<void> {
 public:
-    WriteMacPcCommand(std::shared_ptr<protocol::IProtocol> protocol,
+    WriteMacPcCommand(std::shared_ptr<protocols::IProtocol> protocols,
                       const MacPcInfo& mac);
     ~WriteMacPcCommand() override;
 

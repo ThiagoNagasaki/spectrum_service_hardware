@@ -12,9 +12,9 @@
 namespace command::mcb {
 
 struct WriteInfo2Command::Impl {
-    Impl(std::shared_ptr<protocol::IProtocol> p,
+    Impl(std::shared_ptr<protocols::IProtocol> p,
          const std::array<uint8_t, 15>& d)
-      : protocol(std::move(p))
+      : protocols(std::move(p))
       , data(d)
       , logger(spdlog::default_logger())
     {
@@ -25,19 +25,19 @@ struct WriteInfo2Command::Impl {
 
     void run() {
         std::vector<uint8_t> payload(data.begin(), data.end());
-        protocol->sendCommand(
+        protocols->sendCommand(
             static_cast<uint8_t>(utils::enum_::MCBCommand::WRITE_INFO2),
             payload
         );
     }
 
-    std::shared_ptr<protocol::IProtocol> protocol;
+    std::shared_ptr<protocols::IProtocol> protocols;
     std::array<uint8_t, 15>               data;
     std::shared_ptr<spdlog::logger>       logger;
 };
 
 WriteInfo2Command::WriteInfo2Command(
-    std::shared_ptr<protocol::IProtocol> proto,
+    std::shared_ptr<protocols::IProtocol> proto,
     const std::array<uint8_t, 15>& data
 ) : impl_(std::make_unique<Impl>(proto, data))
 {}

@@ -1,50 +1,37 @@
-// protocols/mcb_keyboard/mcb_keyboard_protocol.h
-#ifndef PROTOCOLS_MCB_KEYBOARD_MCB_KEYBOARD_PROTOCOL_H
-#define PROTOCOLS_MCB_KEYBOARD_MCB_KEYBOARD_PROTOCOL_H
+#pragma once
 #include "../../../utils/enum_/mcb_port_addresses.h"
 #include "../../../utils/logger/logger.h"  
+#include "../../../libraries/protocols/i_protocol.h"  
+#include "../../../libraries/transport/interface/i_transport.h" 
+#include "../../../libraries/receiver/i_receiver.h" 
+
 #include <vector>
 #include <optional>
 #include <cstdint>
 #include <memory>
-
-           
+#include <functional>
 
 namespace protocols::mcb_keyboard {
-using utils::Logger;
-using utils::enum_::CommandContext;
-using utils::enum_::ErrorCode;
+
 using utils::enum_::MCBCommand;
-using utils::enum_::STX;
-using utils::enum_::ETX;
-using utils::enum_::MCB_MIN_FRAME_SIZE;
+
 /**
  * \brief Frame MCB decodificado (após parseFrame).
  */
 struct MCBFrame {
-    MCBCommand command;  ///< comando
-    std::vector<uint8_t>    data;     ///< payload (bytes de dados)
+    MCBCommand command; 
+    std::vector<uint8_t> data;
 };
 
-/**
- * \class MCBProtocol
- * \brief Monta e desmonta frames MCB com PImpl e logs em spdlog.
- */
-class MCBProtocol {
+class MCBProtocol : public protocols::IProtocol {
 public:
-    MCBProtocol();
+    MCBProtocol(std::shared_ptr<transport::interface::ITransport> transport,
+                std::shared_ptr<receiver::IReceiver<MCBFrame>> receiver);
     ~MCBProtocol();
 
-    /// Gera frame completo: STX | length | cmd | data.. | checksum | ETX
-    std::vector<uint8_t> buildFrame(
-        MCBCommand cmd,
-        const std::vector<uint8_t>& payload
-    ) const;
-
-    /// Tenta parsear um buffer como frame MCB e retorna MCBFrame.
-    std::optional<MCBFrame> parseFrame(
-        const std::vector<uint8_t>& buffer
-    ) const;
+    std::vector<uint8_t> buildFrame(uint8_t cmd, const std::vector<uint8_t>& payload) override;
+    std::optional<std::vector<uint8_t>> parseFrame(const std::vector<uint8_t>& buffer) override;
+    void subscribe(std::function<void(const std::vector<uint8_t>&)> cb) override;
 
 private:
     class Impl;
@@ -52,5 +39,3 @@ private:
 };
 
 } // namespace protocols::mcb_keyboard
-
-#endif // PROTOCOLS_MCB_KEYBOARD_MCB_KEYBOARD_PROTOCOL_H

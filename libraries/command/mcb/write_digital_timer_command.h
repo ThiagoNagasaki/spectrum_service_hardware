@@ -22,7 +22,7 @@ namespace command::mcb {
  */
 class WriteDigitalTimerCommand : public ICommand<void> {
 public:
-    WriteDigitalTimerCommand(std::shared_ptr<protocol::IProtocol> protocol,
+    WriteDigitalTimerCommand(std::shared_ptr<protocols::IProtocol> protocols,
                              utils::enum_::DigitalOutputPort port,
                              uint16_t timeoutSeconds);
     ~WriteDigitalTimerCommand() override;

@@ -19,7 +19,7 @@ namespace command::mcb {
  */
 class WriteDigitalOutCommand : public ICommand<void> {
 public:
-    WriteDigitalOutCommand(std::shared_ptr<protocol::IProtocol> protocol,
+    WriteDigitalOutCommand(std::shared_ptr<protocols::IProtocol> protocols,
                            utils::enum_::DigitalOutputPort port,
                            uint8_t value);
     ~WriteDigitalOutCommand() override;

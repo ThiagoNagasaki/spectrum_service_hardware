@@ -34,7 +34,7 @@ struct VersionInfo {
  */
 class ReadVersionCommand : public ICommand<VersionInfo> {
 public:
-    explicit ReadVersionCommand(std::shared_ptr<protocol::IProtocol> protocol);
+    explicit ReadVersionCommand(std::shared_ptr<protocols::IProtocol> protocols);
     ~ReadVersionCommand() override;
 
     VersionInfo execute() override;

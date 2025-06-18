@@ -25,7 +25,7 @@ class ReadSensorDistanceCommand
 {
 public:
     ReadSensorDistanceCommand(
-        std::shared_ptr<protocol::IProtocol> proto,
+        std::shared_ptr<protocols::IProtocol> proto,
         utils::enum_::SensorDistanceMode mode
     );
     ~ReadSensorDistanceCommand() override;

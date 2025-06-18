@@ -12,26 +12,26 @@
 namespace command::keyboard {
 using utils::enum_::MCBCommand;
 struct WriteBeepTeclaCommand::Impl {
-    Impl(std::shared_ptr<protocol::IProtocol> p, bool en)
-      : protocol(std::move(p)), enabled(en),
+    Impl(std::shared_ptr<protocols::IProtocol> p, bool en)
+      : protocols(std::move(p)), enabled(en),
         logger(spdlog::default_logger())
     {}
 
     void run() {
         uint8_t val = enabled ? 1 : 0;
-        protocol->sendCommand(
+        protocols->sendCommand(
             static_cast<uint8_t>(MCBCommand::CMD_BEEP_TECLA),
             { val }
         );
     }
 
-    std::shared_ptr<protocol::IProtocol> protocol;
+    std::shared_ptr<protocols::IProtocol> protocols;
     bool                                 enabled;
     std::shared_ptr<spdlog::logger>      logger;
 };
 
 WriteBeepTeclaCommand::WriteBeepTeclaCommand(
-    std::shared_ptr<protocol::IProtocol> proto,
+    std::shared_ptr<protocols::IProtocol> proto,
     bool enable
 ) : impl_(std::make_unique<Impl>(proto, enable))
 {}

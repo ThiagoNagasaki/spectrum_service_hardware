@@ -27,7 +27,7 @@ class ReadInfo2Command
   : public ICommand<Info2Info>
 {
 public:
-    explicit ReadInfo2Command(std::shared_ptr<protocol::IProtocol> protocol);
+    explicit ReadInfo2Command(std::shared_ptr<protocols::IProtocol> protocols);
     ~ReadInfo2Command() override;
 
     Info2Info execute() override;

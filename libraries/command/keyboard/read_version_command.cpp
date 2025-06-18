@@ -12,13 +12,13 @@
 namespace command::keyboard {
 using utils::enum_::MCBCommand;
 struct ReadVersionCommand::Impl {
-    explicit Impl(std::shared_ptr<protocol::IProtocol> p)
-        : protocol(std::move(p))
+    explicit Impl(std::shared_ptr<protocols::IProtocol> p)
+        : protocols(std::move(p))
         , logger(spdlog::default_logger())
     {}
 
     VersionInfo run() {
-        auto data = protocol->sendCommand(
+        auto data = protocols->sendCommand(
             static_cast<uint8_t>(MCBCommand::CMD_VERSION),
             {}
         );
@@ -32,12 +32,12 @@ struct ReadVersionCommand::Impl {
         };
     }
 
-    std::shared_ptr<protocol::IProtocol> protocol;
+    std::shared_ptr<protocols::IProtocol> protocols;
     std::shared_ptr<spdlog::logger>      logger;
 };
 
 ReadVersionCommand::ReadVersionCommand(
-    std::shared_ptr<protocol::IProtocol> proto
+    std::shared_ptr<protocols::IProtocol> proto
 ) : impl_(std::make_unique<Impl>(proto))
 {}
 

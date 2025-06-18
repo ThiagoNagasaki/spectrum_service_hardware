@@ -11,10 +11,10 @@
 namespace command::mcb {
 
 struct WriteDigitalTimerCommand::Impl {
-    Impl(std::shared_ptr<protocol::IProtocol> p,
+    Impl(std::shared_ptr<protocols::IProtocol> p,
          utils::enum_::DigitalOutputPort port,
          uint16_t t)
-      : protocol(std::move(p))
+      : protocols(std::move(p))
       , port(port)
       , timeout(t)
       , logger(spdlog::default_logger())
@@ -29,20 +29,20 @@ struct WriteDigitalTimerCommand::Impl {
             high,
             low
         };
-        protocol->sendCommand(
+        protocols->sendCommand(
             static_cast<uint8_t>(utils::enum_::MCBCommand::WRITE_DIGITAL_TIMER),
             payload
         );
     }
 
-    std::shared_ptr<protocol::IProtocol> protocol;
+    std::shared_ptr<protocols::IProtocol> protocols;
     utils::enum_::DigitalOutputPort      port;
     uint16_t                             timeout;
     std::shared_ptr<spdlog::logger>      logger;
 };
 
 WriteDigitalTimerCommand::WriteDigitalTimerCommand(
-    std::shared_ptr<protocol::IProtocol> proto,
+    std::shared_ptr<protocols::IProtocol> proto,
     utils::enum_::DigitalOutputPort port,
     uint16_t timeoutSeconds
 ) : impl_(std::make_unique<Impl>(proto, port, timeoutSeconds))

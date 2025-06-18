@@ -27,7 +27,7 @@ class ReadInfo1Command
   : public ICommand<Info1Info>
 {
 public:
-    explicit ReadInfo1Command(std::shared_ptr<protocol::IProtocol> protocol);
+    explicit ReadInfo1Command(std::shared_ptr<protocols::IProtocol> protocols);
     ~ReadInfo1Command() override;
 
     Info1Info execute() override;

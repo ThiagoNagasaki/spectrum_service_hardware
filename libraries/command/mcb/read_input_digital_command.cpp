@@ -10,14 +10,14 @@
 namespace command::mcb {
 
 struct ReadInputDigitalCommand::Impl {
-  Impl(std::shared_ptr<protocol::IProtocol> p,
+  Impl(std::shared_ptr<protocols::IProtocol> p,
        utils::enum_::DigitalInputPort addr)
-      : protocol(std::move(p)), address(addr),
+      : protocols(std::move(p)), address(addr),
         logger(spdlog::default_logger()) {}
 
   DigitalInputInfo run() {
     std::vector<uint8_t> payload{static_cast<uint8_t>(address)};
-    auto data = protocol->sendCommand(
+    auto data = protocols->sendCommand(
         static_cast<uint8_t>(utils::enum_::MCBCommand::READ_INPUT_DIGITAL),
         payload);
 
@@ -28,13 +28,13 @@ struct ReadInputDigitalCommand::Impl {
     return DigitalInputInfo{data[0] != 0};
   }
 
-  std::shared_ptr<protocol::IProtocol> protocol;
+  std::shared_ptr<protocols::IProtocol> protocols;
   utils::enum_::DigitalInputPort address;
   std::shared_ptr<spdlog::logger> logger;
 };
 
 ReadInputDigitalCommand::ReadInputDigitalCommand(
-    std::shared_ptr<protocol::IProtocol> proto,
+    std::shared_ptr<protocols::IProtocol> proto,
     utils::enum_::DigitalInputPort inputAddress)
     : impl_(std::make_unique<Impl>(proto, inputAddress)) {}
 

@@ -26,7 +26,7 @@ namespace command::mcb {
  */
 class WriteConfigCommand : public ICommand<void> {
 public:
-    WriteConfigCommand(std::shared_ptr<protocol::IProtocol> protocol,
+    WriteConfigCommand(std::shared_ptr<protocols::IProtocol> protocols,
                        utils::enum_::ConfigAddress address,
                        std::vector<uint8_t> values);
     ~WriteConfigCommand() override;

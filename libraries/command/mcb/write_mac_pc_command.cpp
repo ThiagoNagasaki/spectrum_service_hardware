@@ -11,28 +11,28 @@
 namespace command::mcb {
 
 struct WriteMacPcCommand::Impl {
-    Impl(std::shared_ptr<protocol::IProtocol> p,
+    Impl(std::shared_ptr<protocols::IProtocol> p,
          const MacPcInfo& m)
-      : protocol(std::move(p))
+      : protocols(std::move(p))
       , info(m)
       , logger(spdlog::default_logger())
     {}
 
     void run() {
-        protocol->sendCommand(
+        protocols->sendCommand(
             static_cast<uint8_t>(utils::enum_::MCBCommand::WRITE_MAC_PC),
             { info.mac[0], info.mac[1], info.mac[2],
               info.mac[3], info.mac[4], info.mac[5] }
         );
     }
 
-    std::shared_ptr<protocol::IProtocol> protocol;
+    std::shared_ptr<protocols::IProtocol> protocols;
     MacPcInfo                           info;
     std::shared_ptr<spdlog::logger>     logger;
 };
 
 WriteMacPcCommand::WriteMacPcCommand(
-    std::shared_ptr<protocol::IProtocol> proto,
+    std::shared_ptr<protocols::IProtocol> proto,
     const MacPcInfo& mac
 ) : impl_(std::make_unique<Impl>(proto, mac))
 {}

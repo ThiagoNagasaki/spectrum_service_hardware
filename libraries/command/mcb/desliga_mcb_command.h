@@ -18,7 +18,7 @@ namespace command::mcb {
  */
 class DesligaMcbCommand : public ICommand<void> {
 public:
-    explicit DesligaMcbCommand(std::shared_ptr<protocol::IProtocol> protocol);
+    explicit DesligaMcbCommand(std::shared_ptr<protocols::IProtocol> protocols);
     ~DesligaMcbCommand() override;
 
     void execute() override;

@@ -10,14 +10,14 @@
 namespace command::mcb {
 
 struct ReadSensorDistanceCommand::Impl {
-    Impl(std::shared_ptr<protocol::IProtocol> p,
+    Impl(std::shared_ptr<protocols::IProtocol> p,
          utils::enum_::SensorDistanceMode m)
-      : protocol(std::move(p)), mode(m),
+      : protocols(std::move(p)), mode(m),
         logger(spdlog::default_logger())
     {}
 
     SensorDistanceInfo run() {
-        auto data = protocol->sendCommand(
+        auto data = protocols->sendCommand(
             static_cast<uint8_t>(utils::enum_::MCBCommand::READ_SENSOR_DISTANCE),
             { static_cast<uint8_t>(mode) }
         );
@@ -30,13 +30,13 @@ struct ReadSensorDistanceCommand::Impl {
         return { v };
     }
 
-    std::shared_ptr<protocol::IProtocol>       protocol;
+    std::shared_ptr<protocols::IProtocol>       protocols;
     utils::enum_::SensorDistanceMode           mode;
     std::shared_ptr<spdlog::logger>           logger;
 };
 
 ReadSensorDistanceCommand::ReadSensorDistanceCommand(
-    std::shared_ptr<protocol::IProtocol> proto,
+    std::shared_ptr<protocols::IProtocol> proto,
     utils::enum_::SensorDistanceMode mode
 ) : impl_(std::make_unique<Impl>(proto, mode))
 {}

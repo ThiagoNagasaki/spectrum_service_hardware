@@ -2,10 +2,10 @@
 #ifndef READ_ANALOG_INPUT_COMMAND_H
 #define READ_ANALOG_INPUT_COMMAND_H
 
-#include "../../libraries/command/i_command.h"
-#include "../../libraries/protocols/i_protocol.h"
-#include "../../utils/enum_/mcb_port_addresses.h"
-#include "../../utils/logger/logger.h"
+#include "../../../libraries/command/i_command.h"
+#include "../../../libraries/protocols/i_protocol.h"
+#include "../../../utils/enum_/mcb_port_addresses.h"
+#include "../../../utils/logger/logger.h"
 #include <memory>
 #include <cstdint>
 #include <string>  // adiciona suporte a std::string
@@ -33,7 +33,7 @@ class ReadAnalogInputCommand
   : public ICommand<AnalogInputInfo>
 {
 public:
-    ReadAnalogInputCommand(std::shared_ptr<protocol::IProtocol> proto,
+    ReadAnalogInputCommand(std::shared_ptr<protocols::IProtocol> proto,
                            utils::enum_::AnalogInputPort analogAddress);
     ~ReadAnalogInputCommand() override;
 

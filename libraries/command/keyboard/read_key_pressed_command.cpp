@@ -12,12 +12,12 @@
 namespace command::keyboard {
 using utils::enum_::MCBCommand; 
 struct ReadKeyPressedCommand::Impl {
-    explicit Impl(std::shared_ptr<protocol::IProtocol> p)
-        : protocol(std::move(p)), logger(spdlog::default_logger())
+    explicit Impl(std::shared_ptr<protocols::IProtocol> p)
+        : protocols(std::move(p)), logger(spdlog::default_logger())
     {}
 
     KeyPressedInfo run() {
-        auto data = protocol->sendCommand(
+        auto data = protocols->sendCommand(
             static_cast<uint8_t>(utils::enum_::MCBCommand::CMD_KEY_PRESSED),
             {}
         );
@@ -32,12 +32,12 @@ struct ReadKeyPressedCommand::Impl {
         };
     }
 
-    std::shared_ptr<protocol::IProtocol> protocol;
+    std::shared_ptr<protocols::IProtocol> protocols;
     std::shared_ptr<spdlog::logger>      logger;
 };
 
 ReadKeyPressedCommand::ReadKeyPressedCommand(
-    std::shared_ptr<protocol::IProtocol> proto
+    std::shared_ptr<protocols::IProtocol> proto
 ) : impl_(std::make_unique<Impl>(proto))
 {}
 

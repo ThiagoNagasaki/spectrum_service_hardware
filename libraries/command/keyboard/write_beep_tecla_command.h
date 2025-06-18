@@ -21,7 +21,7 @@ namespace command::keyboard {
  */
 class WriteBeepTeclaCommand : public ICommand<void> {
 public:
-    WriteBeepTeclaCommand(std::shared_ptr<protocol::IProtocol> protocol,
+    WriteBeepTeclaCommand(std::shared_ptr<protocols::IProtocol> protocols,
                           bool enable);
     ~WriteBeepTeclaCommand() override;
 

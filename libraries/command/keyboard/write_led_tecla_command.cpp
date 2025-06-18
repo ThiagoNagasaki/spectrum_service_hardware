@@ -12,25 +12,25 @@
 namespace command::keyboard {
 using utils::enum_::MCBCommand;
 struct WriteLedTeclaCommand::Impl {
-    Impl(std::shared_ptr<protocol::IProtocol> p, KeyCode k, bool s)
-      : protocol(std::move(p)), key(k), on(s), logger(spdlog::default_logger())
+    Impl(std::shared_ptr<protocols::IProtocol> p, KeyCode k, bool s)
+      : protocols(std::move(p)), key(k), on(s), logger(spdlog::default_logger())
     {}
 
     void run() {
-        protocol->sendCommand(
+        protocols->sendCommand(
             static_cast<uint8_t>(MCBCommand::CMD_LED_TECLA),
             { static_cast<uint8_t>(key), static_cast<uint8_t>(on) }
         );
     }
 
-    std::shared_ptr<protocol::IProtocol> protocol;
+    std::shared_ptr<protocols::IProtocol> protocols;
     KeyCode                              key;
     bool                                 on;
     std::shared_ptr<spdlog::logger>      logger;
 };
 
 WriteLedTeclaCommand::WriteLedTeclaCommand(
-    std::shared_ptr<protocol::IProtocol> proto,
+    std::shared_ptr<protocols::IProtocol> proto,
     KeyCode key,
     bool on
 ) : impl_(std::make_unique<Impl>(proto, key, on))

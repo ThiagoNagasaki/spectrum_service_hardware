@@ -1,6 +1,7 @@
 add_library(receiver_core
 keyboard/keyboard_receiver.cpp
 mcb/mcb_receiver.cpp
+mcb/mcb_frame_awaiter.cpp
 )
 
 target_include_directories(receiver_core PUBLIC

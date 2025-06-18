@@ -8,10 +8,10 @@
 namespace command::mcb {
 
 struct WriteConfigCommand::Impl {
-    Impl(std::shared_ptr<protocol::IProtocol> p,
+    Impl(std::shared_ptr<protocols::IProtocol> p,
          utils::enum_::ConfigAddress addr,
          std::vector<uint8_t> vals)
-      : protocol(std::move(p))
+      : protocols(std::move(p))
       , address(addr)
       , values(std::move(vals))
       , logger(spdlog::default_logger())
@@ -29,20 +29,20 @@ struct WriteConfigCommand::Impl {
         payload.push_back(static_cast<uint8_t>(address));
         payload.insert(payload.end(), values.begin(), values.end());
 
-        protocol->sendCommand(
+        protocols->sendCommand(
             static_cast<uint8_t>(utils::enum_::MCBCommand::WRITE_CONFIG),
             payload
         );
     }
 
-    std::shared_ptr<protocol::IProtocol> protocol;
+    std::shared_ptr<protocols::IProtocol> protocols;
     utils::enum_::ConfigAddress          address;
     std::vector<uint8_t>                 values;
     std::shared_ptr<spdlog::logger>      logger;
 };
 
 WriteConfigCommand::WriteConfigCommand(
-    std::shared_ptr<protocol::IProtocol> proto,
+    std::shared_ptr<protocols::IProtocol> proto,
     utils::enum_::ConfigAddress address,
     std::vector<uint8_t> values
 ) : impl_(std::make_unique<Impl>(proto, address, std::move(values)))

@@ -12,8 +12,8 @@
 namespace command::keyboard {
 using utils::enum_::MCBCommand;
 struct WriteBuzzerCommand::Impl {
-    Impl(std::shared_ptr<protocol::IProtocol> p, uint16_t dur)
-      : protocol(std::move(p)), duration(dur),
+    Impl(std::shared_ptr<protocols::IProtocol> p, uint16_t dur)
+      : protocols(std::move(p)), duration(dur),
         logger(spdlog::default_logger())
     {
         if (duration > 16000) {
@@ -26,19 +26,19 @@ struct WriteBuzzerCommand::Impl {
     void run() {
         uint8_t high = static_cast<uint8_t>((duration >> 8) & 0xFF);
         uint8_t low  = static_cast<uint8_t>(duration & 0xFF);
-        protocol->sendCommand(
+        protocols->sendCommand(
             static_cast<uint8_t>(MCBCommand::CMD_BUZZER),
             { high, low }
         );
     }
 
-    std::shared_ptr<protocol::IProtocol> protocol;
+    std::shared_ptr<protocols::IProtocol> protocols;
     uint16_t                             duration;
     std::shared_ptr<spdlog::logger>      logger;
 };
 
 WriteBuzzerCommand::WriteBuzzerCommand(
-    std::shared_ptr<protocol::IProtocol> proto,
+    std::shared_ptr<protocols::IProtocol> proto,
     uint16_t durationMs
 ) : impl_(std::make_unique<Impl>(proto, durationMs))
 {}

@@ -26,7 +26,7 @@ struct KeyPressedInfo {
 
 class ReadKeyPressedCommand : public command::ICommand<KeyPressedInfo> {
 public:
-    explicit ReadKeyPressedCommand(std::shared_ptr<protocol::IProtocol> protocol);
+    explicit ReadKeyPressedCommand(std::shared_ptr<protocols::IProtocol> protocols);
     ~ReadKeyPressedCommand() override;
 
     KeyPressedInfo execute() override;

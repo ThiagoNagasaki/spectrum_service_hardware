@@ -19,7 +19,7 @@ namespace command::mcb {
  */
 class WriteInfo1Command : public ICommand<void> {
 public:
-    explicit WriteInfo1Command(std::shared_ptr<protocol::IProtocol> protocol,
+    explicit WriteInfo1Command(std::shared_ptr<protocols::IProtocol> protocols,
                                const std::array<uint8_t, 15>& data);
     ~WriteInfo1Command() override;
 

@@ -11,9 +11,9 @@
 namespace command::mcb {
 
 struct WriteDataHoraCommand::Impl {
-    Impl(std::shared_ptr<protocol::IProtocol> p,
+    Impl(std::shared_ptr<protocols::IProtocol> p,
          const DataHoraInfo& dh)
-      : protocol(std::move(p))
+      : protocols(std::move(p))
       , data(dh)
       , logger(spdlog::default_logger())
     {}
@@ -30,19 +30,19 @@ struct WriteDataHoraCommand::Impl {
         payload[7] = static_cast<uint8_t>(data.year);
         payload[8] = data.control;
 
-        protocol->sendCommand(
+        protocols->sendCommand(
             static_cast<uint8_t>(utils::enum_::MCBCommand::WRITE_DATA_HORA),
             payload
         );
     }
 
-    std::shared_ptr<protocol::IProtocol> protocol;
+    std::shared_ptr<protocols::IProtocol> protocols;
     DataHoraInfo                        data;
     std::shared_ptr<spdlog::logger>     logger;
 };
 
 WriteDataHoraCommand::WriteDataHoraCommand(
-    std::shared_ptr<protocol::IProtocol> proto,
+    std::shared_ptr<protocols::IProtocol> proto,
     const DataHoraInfo& dataHora
 ) : impl_(std::make_unique<Impl>(proto, dataHora))
 {}

@@ -21,10 +21,12 @@ target_link_libraries(spectrum_service
         spdlog::spdlog
         fmt::fmt
     PRIVATE
+    
         utils       
         command_core   
         protocols_core 
         receiver_core
-        transport_core     
+        transport_core  
+        controller   
     
 )

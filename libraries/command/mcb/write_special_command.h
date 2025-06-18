@@ -24,7 +24,7 @@ namespace command::mcb {
  */
 class WriteSpecialCommand : public ICommand<void> {
 public:
-    WriteSpecialCommand(std::shared_ptr<protocol::IProtocol> protocol,
+    WriteSpecialCommand(std::shared_ptr<protocols::IProtocol> protocols,
                         uint8_t address,
                         uint8_t value);
     ~WriteSpecialCommand() override;

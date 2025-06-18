@@ -27,7 +27,7 @@ class ReadChaveLigaCommand
   : public ICommand<ChaveLigaInfo>
 {
 public:
-    explicit ReadChaveLigaCommand(std::shared_ptr<protocol::IProtocol> protocol);
+    explicit ReadChaveLigaCommand(std::shared_ptr<protocols::IProtocol> protocols);
     ~ReadChaveLigaCommand() override;
 
     ChaveLigaInfo execute() override;

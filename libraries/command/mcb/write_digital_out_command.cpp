@@ -11,10 +11,10 @@
 namespace command::mcb {
 
 struct WriteDigitalOutCommand::Impl {
-    Impl(std::shared_ptr<protocol::IProtocol> p,
+    Impl(std::shared_ptr<protocols::IProtocol> p,
          utils::enum_::DigitalOutputPort port,
          uint8_t val)
-      : protocol(std::move(p))
+      : protocols(std::move(p))
       , port(port)
       , value(val)
       , logger(spdlog::default_logger())
@@ -31,20 +31,20 @@ struct WriteDigitalOutCommand::Impl {
             static_cast<uint8_t>(port),
             value
         };
-        protocol->sendCommand(
+        protocols->sendCommand(
             static_cast<uint8_t>(utils::enum_::MCBCommand::WRITE_DIGITAL_OUT),
             payload
         );
     }
 
-    std::shared_ptr<protocol::IProtocol> protocol;
+    std::shared_ptr<protocols::IProtocol> protocols;
     utils::enum_::DigitalOutputPort      port;
     uint8_t                              value;
     std::shared_ptr<spdlog::logger>      logger;
 };
 
 WriteDigitalOutCommand::WriteDigitalOutCommand(
-    std::shared_ptr<protocol::IProtocol> proto,
+    std::shared_ptr<protocols::IProtocol> proto,
     utils::enum_::DigitalOutputPort port,
     uint8_t value
 ) : impl_(std::make_unique<Impl>(proto, port, value))

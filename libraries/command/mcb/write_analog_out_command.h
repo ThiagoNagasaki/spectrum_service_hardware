@@ -20,7 +20,7 @@ namespace command::mcb {
  */
 class WriteAnalogOutCommand : public ICommand<void> {
 public:
-    WriteAnalogOutCommand(std::shared_ptr<protocol::IProtocol> protocol,
+    WriteAnalogOutCommand(std::shared_ptr<protocols::IProtocol> protocols,
                           utils::enum_::AnalogInputPort address,
                           uint8_t dacValue);
     ~WriteAnalogOutCommand() override;

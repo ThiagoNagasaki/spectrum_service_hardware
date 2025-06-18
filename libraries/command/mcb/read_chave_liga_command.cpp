@@ -10,13 +10,13 @@
 namespace command::mcb {
 
 struct ReadChaveLigaCommand::Impl {
-    explicit Impl(std::shared_ptr<protocol::IProtocol> p)
-        : protocol(std::move(p))
+    explicit Impl(std::shared_ptr<protocols::IProtocol> p)
+        : protocols(std::move(p))
         , logger(spdlog::default_logger())
     {}
 
     ChaveLigaInfo run() {
-        auto data = protocol->sendCommand(
+        auto data = protocols->sendCommand(
             static_cast<uint8_t>(utils::enum_::MCBCommand::READ_CHAVE_LIGA),
             {}
         );
@@ -31,12 +31,12 @@ struct ReadChaveLigaCommand::Impl {
         };
     }
 
-    std::shared_ptr<protocol::IProtocol> protocol;
+    std::shared_ptr<protocols::IProtocol> protocols;
     std::shared_ptr<spdlog::logger>      logger;
 };
 
 ReadChaveLigaCommand::ReadChaveLigaCommand(
-    std::shared_ptr<protocol::IProtocol> proto
+    std::shared_ptr<protocols::IProtocol> proto
 ) : impl_(std::make_unique<Impl>(proto))
 {}
 

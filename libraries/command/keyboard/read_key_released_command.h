@@ -24,7 +24,7 @@ struct KeyReleasedInfo {
 
 class ReadKeyReleasedCommand : public ICommand<KeyReleasedInfo> {
 public:
-    explicit ReadKeyReleasedCommand(std::shared_ptr<protocol::IProtocol> protocol);
+    explicit ReadKeyReleasedCommand(std::shared_ptr<protocols::IProtocol> protocols);
     ~ReadKeyReleasedCommand() override;
 
     KeyReleasedInfo execute() override;

@@ -20,7 +20,7 @@ namespace command::mcb {
  */
 class WriteBaudUart1Command : public ICommand<void> {
 public:
-    WriteBaudUart1Command(std::shared_ptr<protocol::IProtocol> protocol,
+    WriteBaudUart1Command(std::shared_ptr<protocols::IProtocol> protocols,
                           uint8_t speedCode,
                           uint8_t parityCode);
     ~WriteBaudUart1Command() override;

@@ -27,7 +27,7 @@ class ReadMacPcCommand
   : public ICommand<MacPcInfo>
 {
 public:
-    explicit ReadMacPcCommand(std::shared_ptr<protocol::IProtocol> protocol);
+    explicit ReadMacPcCommand(std::shared_ptr<protocols::IProtocol> protocols);
     ~ReadMacPcCommand() override;
 
     MacPcInfo execute() override;

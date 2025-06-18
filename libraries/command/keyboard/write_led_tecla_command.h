@@ -17,7 +17,7 @@ using utils::enum_::KeyCode;
  */
 class WriteLedTeclaCommand : public ICommand<void> {
 public:
-    WriteLedTeclaCommand(std::shared_ptr<protocol::IProtocol> protocol,
+    WriteLedTeclaCommand(std::shared_ptr<protocols::IProtocol> protocols,
                          KeyCode key,
                          bool on);
     ~WriteLedTeclaCommand() override;
