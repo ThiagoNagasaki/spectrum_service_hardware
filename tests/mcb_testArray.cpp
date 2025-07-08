@@ -15,7 +15,6 @@ int main() {
             return 1;
         }
 
-        // Enfileira 5 execuções dinamicamente
         std::vector<std::function<void()>> comandos;
         for (int i = 0; i < 5; ++i) {
             comandos.emplace_back([&, i]() {

@@ -55,13 +55,13 @@ public:
 
     std::optional<MCBFrame> parseFrame(const std::vector<uint8_t>& buffer) const {
 
-         std::cout << "chegou no mcb frame";
+         std::cout << "chegou EM parseFrame \n";
         if (buffer.size() < MCB_MIN_FRAME_SIZE || buffer.front() != STX || buffer.back() != ETX) {
             Logger::instance().warning(CommandContext::HARDWARE, ErrorCode::ProtocolError,
                 "MCBProtocol: frame inválido");
             return std::nullopt;
         }
-
+        std::cout << "PROTOCOLO MCB_MIN_FRAME_SIZE STX ETX OK \n";
         uint8_t length = buffer[1];
         size_t expected = static_cast<size_t>(length) + 4;
         if (buffer.size() != expected) {
@@ -69,7 +69,7 @@ public:
                 fmt::format("MCBProtocol: tamanho inconsistente, esperado={}, real={}", expected, buffer.size()));
             return std::nullopt;
         }
-
+        std::cout << "Tamanho ok \n";
         uint8_t cmdByte = buffer[2];
         auto cmd = toMCBCommand(cmdByte);
 
@@ -86,7 +86,7 @@ public:
                 fmt::format("Checksum inválido: calc=0x{:02X}, recv=0x{:02X}", calcChk, recvChk));
             return std::nullopt;
         }
-
+    std::cout << "CalculateChecksum ok \n";
         return MCBFrame{cmd, std::move(data)};
     }
 

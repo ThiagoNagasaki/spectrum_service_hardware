@@ -24,16 +24,11 @@ controller::DeviceController ControllerFactory::build() {
         throw std::runtime_error("ControllerFactory::build: TCP config não definido");
     }
 
-    auto transport = std::make_shared<TCPTransport>(tcp_config_);
-
-
-    auto receiver = std::make_shared<receiver::DummyMCBFrameReceiver>();
-    auto protocol = std::make_shared<MCBProtocol>(transport, receiver);
-    auto awaiter = std::make_shared<receiver::mcb::MCBFrameVectorAwaiter>(transport);
-    auto protoController = std::make_shared<controller::ProtocolController>(
-    protocol, transport, awaiter
-);
-
+    auto transport       =  std::make_shared<TCPTransport>(tcp_config_);
+    auto receiver        =  std::make_shared<receiver::DummyMCBFrameReceiver>();
+    auto protocol        =  std::make_shared<MCBProtocol>(transport, receiver);
+    auto awaiter         =  std::make_shared<receiver::mcb::MCBFrameVectorAwaiter>(transport);
+    auto protoController =  std::make_shared<controller::ProtocolController>(protocol, transport, awaiter);
     return controller::DeviceController(transport, protoController);
 }
 }

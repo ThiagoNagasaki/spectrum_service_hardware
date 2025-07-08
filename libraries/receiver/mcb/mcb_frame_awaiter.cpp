@@ -10,7 +10,8 @@ MCBFrameAwaiter::MCBFrameAwaiter(
     std::shared_ptr<receiver::IReceiver<protocols::mcb_keyboard::MCBFrame>> receiver)
     : transport_(std::move(transport)),
       protocol_(transport_, std::move(receiver)) 
-{ 
+{
+
 }
 
 protocols::mcb_keyboard::MCBFrame MCBFrameAwaiter::waitForFrame() {
@@ -25,7 +26,7 @@ protocols::mcb_keyboard::MCBFrame MCBFrameAwaiter::waitForFrame() {
     if (!parsed || parsed->empty()) {
         throw std::runtime_error("MCBFrameAwaiter: falha ao parsear frame");
     }
-
+    std::cout << "PROTOCOLO MCB_MIN_FRAME_SIZE STX ETX OK \n";
     const auto& data = *parsed;
     if (data.size() < 1) {
         throw std::runtime_error("MCBFrameAwaiter: frame inválido, sem comando");
@@ -40,5 +41,4 @@ protocols::mcb_keyboard::MCBFrame MCBFrameAwaiter::waitForFrame() {
 
     return frame;
 }
-
 } // namespace receiver
