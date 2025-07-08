@@ -39,6 +39,9 @@ public:
     std::cout << "Conectando MCB em " << config_.ip << ":" << config_.port << "...\n";
         std::cout << "chegou em tcp transporte esta tentando conectart \n";
         sockfd_ = ::socket(AF_INET, SOCK_STREAM, 0);
+        struct timeval tv{ .tv_sec = 0, .tv_usec = 500000 }; // 500 ms
+        setsockopt(sockfd_, SOL_SOCKET, SO_RCVTIMEO, &tv, sizeof(tv));
+
         if (sockfd_ < 0) {
             Logger::instance().error(CommandContext::NETWORK, ErrorCode::TCPConnectionFailure,
                 fmt::format("Erro ao criar socket {}", config_.ip));
